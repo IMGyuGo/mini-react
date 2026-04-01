@@ -455,10 +455,8 @@ const INTEGRATION_SCENARIO_METADATA = new Map([
   [
     '워크숍 스킬 버튼 클릭이 실제 preview 상태를 바꿔야 한다',
     {
-      status: 'blocked',
-      coverage: 'runIntegrationSmokeTests()에 workshop preview button.click() smoke test가 연결돼 있습니다.',
-      blocker: 'preview 내부 버튼의 onclick이 실제 DOM listener로 연결되지 않으면 이 시나리오는 통과할 수 없습니다.',
-      owner: 'A 역할: framework event props 연결',
+      status: 'covered',
+      coverage: 'runIntegrationSmokeTests()에서 workshop preview button.click() smoke test가 브라우저 기준 passed로 확인된 상태입니다.',
     },
   ],
   [
