@@ -27,18 +27,41 @@ export function createLayout(root) {
     <main class="nexus-shell learning-shell">
       <header class="hero learning-hero">
         <div class="hero-copy">
-          <p class="eyebrow">Mini React Learning Page</p>
-          <h1>React 핵심 개념 학습 페이지</h1>
-          <p class="hero-description">
-            Component, Props, State, Hooks, Virtual DOM을
-            직접 보고 만지면서 배우는 학습용 서비스입니다.
-          </p>
+          <p class="eyebrow">React Learning</p>
+          <div class="hero-title-row">
+            <svg
+              class="react-mark react-mark-inline"
+              viewBox="0 0 256 256"
+              role="img"
+              aria-label="React logo"
+            >
+              <circle class="react-mark-core" cx="128" cy="128" r="18"></circle>
+              <ellipse class="react-mark-orbit" cx="128" cy="128" rx="92" ry="36"></ellipse>
+              <ellipse
+                class="react-mark-orbit"
+                cx="128"
+                cy="128"
+                rx="92"
+                ry="36"
+                transform="rotate(60 128 128)"
+              ></ellipse>
+              <ellipse
+                class="react-mark-orbit"
+                cx="128"
+                cy="128"
+                rx="92"
+                ry="36"
+                transform="rotate(120 128 128)"
+              ></ellipse>
+            </svg>
+            <h1>What is React?</h1>
+          </div>
 
           <div class="hero-pills" aria-label="핵심 학습 키워드">
-            <span class="hero-pill">Pure JavaScript</span>
-            <span class="hero-pill">Mini React</span>
+            <span class="hero-pill">Declarative UI</span>
+            <span class="hero-pill">Component-Based</span>
             <span class="hero-pill">Interactive Learning</span>
-            <span class="hero-pill">Chapter Navigation</span>
+            <span class="hero-pill">Mini React</span>
           </div>
         </div>
       </header>
@@ -47,10 +70,6 @@ export function createLayout(root) {
         <aside class="panel-card learning-sidebar">
           <p class="sidebar-label">Roadmap</p>
           <h2>학습 순서</h2>
-          <p class="sidebar-copy">
-            지금은 한 번에 한 챕터씩 집중해서 보는 방식입니다.
-            왼쪽 메뉴를 누르면 해당 챕터로 화면이 바뀝니다.
-          </p>
           <nav id="learning-nav" aria-label="학습 섹션 목록"></nav>
         </aside>
 

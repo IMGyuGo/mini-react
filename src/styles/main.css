@@ -3,30 +3,33 @@
    숫자를 한곳에 모아 두면 나중에 분위기를 바꾸기 쉽다.
    =========================================================== */
 :root {
-  --bg-top: #f8f5ef;
-  --bg-bottom: #e6eef6;
-  --panel: #fffdf9;
+  --bg-top: #f4f8fb;
+  --bg-bottom: #e9f1f7;
+  --panel: #ffffff;
   --panel-strong: #ffffff;
-  --panel-soft: #f4f7fb;
-  --line: #d2d9e4;
-  --line-strong: #94a3b8;
-  --text: #152033;
-  --muted: #5d6a7d;
-  --accent: #136f63;
-  --accent-strong: #0f524a;
-  --accent-soft: #e5f4f1;
-  --warning-soft: #fff6d8;
-  --warning-line: #e8c76a;
+  --panel-soft: #f4f9fd;
+  --line: #d7e2eb;
+  --line-strong: #8ea3b5;
+  --text: #1f2328;
+  --muted: #52606d;
+  --accent: #61dafb;
+  --accent-strong: #087ea4;
+  --accent-soft: #e6f7ff;
+  --warning-soft: #fff7db;
+  --warning-line: #e6c96b;
   --danger-soft: #fff1f2;
-  --danger-line: #f4a8b0;
-  --code-bg: #111827;
-  --code-text: #e5ecf6;
-  --shadow-lg: 0 22px 48px rgba(15, 23, 42, 0.12);
-  --shadow-md: 0 14px 28px rgba(15, 23, 42, 0.08);
+  --danger-line: #f3a4b3;
+  --code-bg: #1f2328;
+  --code-text: #eaf4fb;
+  --shadow-lg: 0 24px 50px rgba(31, 35, 40, 0.1);
+  --shadow-md: 0 16px 32px rgba(31, 35, 40, 0.08);
   --radius-xl: 24px;
   --radius-lg: 18px;
   --radius-md: 14px;
   --radius-sm: 10px;
+  --react-dark: #20232a;
+  --react-darker: #16181d;
+  --react-glow: rgba(97, 218, 251, 0.34);
 }
 
 /* ===========================================================
@@ -50,8 +53,8 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    radial-gradient(circle at 12% 10%, rgba(255, 249, 235, 0.9), transparent 34%),
-    radial-gradient(circle at 86% 12%, rgba(220, 236, 249, 0.95), transparent 30%),
+    radial-gradient(circle at 12% 10%, rgba(97, 218, 251, 0.14), transparent 34%),
+    radial-gradient(circle at 86% 12%, rgba(8, 126, 164, 0.08), transparent 30%),
     linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
   font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
 }
@@ -130,22 +133,53 @@ code {
 .panel-card {
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
-  background: rgba(255, 253, 249, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   box-shadow: var(--shadow-lg);
 }
 
 .hero-copy {
-  width: min(980px, 100%);
-  padding: 26px 28px;
+  width: min(760px, 100%);
+  min-height: 0;
+  padding: 24px 28px;
   text-align: center;
+  color: #f6fbff;
   background:
-    radial-gradient(circle at top right, rgba(19, 111, 99, 0.1), transparent 30%),
-    linear-gradient(135deg, rgba(255, 250, 242, 0.98), rgba(240, 248, 248, 0.96));
+    radial-gradient(circle at top right, rgba(97, 218, 251, 0.18), transparent 30%),
+    linear-gradient(135deg, rgba(32, 35, 42, 0.98), rgba(22, 24, 29, 0.98));
+}
+
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.react-mark {
+  width: 72px;
+  height: auto;
+  filter: drop-shadow(0 0 22px var(--react-glow));
+}
+
+.react-mark-inline {
+  width: 58px;
+  flex: 0 0 auto;
+}
+
+.react-mark-orbit {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 10;
+}
+
+.react-mark-core {
+  fill: var(--accent);
 }
 
 .eyebrow {
-  margin: 0 0 8px;
-  color: var(--accent-strong);
+  margin: 0 0 10px;
+  color: var(--accent);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -154,33 +188,25 @@ code {
 
 .hero h1 {
   margin: 0;
-  font-size: clamp(30px, 4vw, 46px);
-  line-height: 1.08;
-}
-
-.hero-description {
-  max-width: 60ch;
-  margin: 12px auto 0;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: clamp(30px, 4vw, 42px);
+  line-height: 1.06;
 }
 
 .hero-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: 16px;
   justify-content: center;
 }
 
 .hero-pill {
   display: inline-flex;
   align-items: center;
-  border: 1px solid rgba(19, 111, 99, 0.18);
+  border: 1px solid rgba(97, 218, 251, 0.24);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.84);
-  color: var(--accent-strong);
+  background: rgba(97, 218, 251, 0.12);
+  color: #dff7ff;
   padding: 8px 12px;
   font-size: 13px;
   font-weight: 700;
@@ -215,21 +241,29 @@ code {
 }
 
 /* ===========================================================
-   메인 2열 구조다.
-   왼쪽은 메뉴, 오른쪽은 실제 내용이 들어간다.
+   메인 학습 레이아웃이다.
+   왼쪽 rail에는 navigation을 두고,
+   가운데 rail에 실제 stage를 고정해서
+   sidebar가 stage 중심축을 밀지 못하게 만든다.
    =========================================================== */
 .main-grid,
 .learning-grid {
   display: grid;
-  grid-template-columns: minmax(210px, 248px) minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns:
+    minmax(196px, 224px)
+    minmax(760px, 920px)
+    minmax(196px, 224px);
+  justify-content: center;
+  gap: 22px;
   align-items: start;
 }
 
 .learning-sidebar {
+  grid-column: 1;
   position: sticky;
   top: 18px;
   padding: 14px;
+  width: 100%;
 }
 
 .sidebar-label {
@@ -255,11 +289,15 @@ code {
 
 .learning-content {
   display: block;
+  width: 100%;
 }
 
 .learning-stage {
+  grid-column: 2;
   display: grid;
   gap: 16px;
+  width: 100%;
+  justify-self: center;
 }
 
 .chapter-shell {
@@ -269,6 +307,7 @@ code {
   justify-content: center;
   gap: 18px;
   text-align: center;
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .chapter-copy {
@@ -343,12 +382,12 @@ code {
 
 .learning-nav-link:hover {
   transform: translateX(2px);
-  border-color: rgba(19, 111, 99, 0.18);
-  background: rgba(19, 111, 99, 0.08);
+  border-color: rgba(97, 218, 251, 0.32);
+  background: rgba(97, 218, 251, 0.12);
 }
 
 .learning-nav-link.is-active {
-  border-color: rgba(19, 111, 99, 0.25);
+  border-color: rgba(97, 218, 251, 0.38);
   background: var(--accent-soft);
   color: var(--accent-strong);
 }
@@ -369,6 +408,7 @@ code {
 .learning-section {
   padding: 22px;
   min-height: 420px;
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .learning-section > h2,
@@ -384,7 +424,7 @@ code {
 .learning-subsection {
   margin-top: 14px;
   border-radius: var(--radius-lg);
-  background: var(--panel-soft);
+  background: #f8fbfe;
   box-shadow: none;
 }
 
@@ -791,9 +831,7 @@ code {
    반응형 대응이다.
    작은 화면에서는 세로로 쌓여야 읽기 쉽다.
    =========================================================== */
-@media (max-width: 1100px) {
-  .hero,
-  .learning-hero,
+@media (max-width: 1200px) {
   .main-grid,
   .learning-grid,
   .ui-preview-grid,
@@ -801,6 +839,11 @@ code {
   .diff-grid,
   .chapter-shell {
     grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .learning-hero {
+    display: flex;
   }
 
   .learning-sidebar {
