@@ -16,10 +16,7 @@ import { useState } from '../src/framework/hooks.js';
 import { createComponentSection } from '../src/pages/componentSection.js';
 import { createHooksSection } from '../src/pages/hooksSection.js';
 import { createStateSection } from '../src/pages/stateSection.js';
-import {
-  WORKSHOP_PRACTICE,
-  createWorkshopSection,
-} from '../src/pages/workshopSection.js';
+import { createWorkshopSection } from '../src/pages/workshopSection.js';
 import { createPlayground } from '../src/ui/codePlayground.js';
 import { createVdomSection } from '../src/pages/vdomSection.js';
 import {
@@ -29,6 +26,52 @@ import {
   runTestCases,
   triggerClick,
 } from './testUtils.js';
+
+const WORKSHOP_TEST_CODE = `function Header(props) {
+  return h('header', null,
+    h('h2', null, props.title)
+  );
+}
+
+function ProfileCard(props) {
+  return h('article', { class: 'profile-card' },
+    h('h3', null, props.name),
+    h('p', null, '트랙: ' + props.track),
+    h('p', null, props.intro)
+  );
+}
+
+function SkillList(props) {
+  return h('ul', null,
+    ...props.skills.map((skill) =>
+      h('li', null,
+        h('button', {
+          onclick: () => props.onSelect(skill),
+        }, skill)
+      )
+    )
+  );
+}
+
+function App() {
+  const [selectedSkill, setSelectedSkill] = useState('Component');
+
+  return h('main', { class: 'profile-app' },
+    h(Header, { title: 'React 학습 카드' }),
+    h(ProfileCard, {
+      name: '정글',
+      track: 'Frontend',
+      intro: '작은 컴포넌트를 조립하는 중입니다.',
+    }),
+    h(SkillList, {
+      skills: ['Component', 'State', 'Hooks'],
+      onSelect: setSelectedSkill,
+    }),
+    h('p', null, '현재 선택된 스킬: ' + selectedSkill)
+  );
+}
+
+return App;`;
 
 // 이번 프로젝트에서 특히 중요한 통합 흐름만 먼저 골라 둔 목록이다.
 // 학습 페이지의 직접 해보기 경험과 framework 파이프라인이 모두 포함되도록 구성했다.
@@ -78,7 +121,7 @@ const INTEGRATION_SCENARIOS = [
     nextStep: 'createVdomSection 또는 createDiffVisualizer를 DOM 환경에서 실행하고, 시나리오 버튼 클릭 전후의 트리 카드와 patch list 텍스트를 assertion한다.',
   },
   {
-    name: '워크숍 섹션의 playground가 답안 코드를 preview에 렌더링해야 한다',
+    name: '워크숍 섹션의 playground가 완성 코드를 preview에 렌더링해야 한다',
     reason: '마지막 종합 실습이 실제로 실행되지 않으면 조립형 학습 경험이 완성되지 않기 때문이다.',
     setup: 'createWorkshopSection으로 섹션 DOM을 만든 뒤, textarea에 answer code를 넣고 실행 버튼을 누른다.',
     checkpoints: [
@@ -271,25 +314,25 @@ return App;`,
         assert(runButton, '워크숍 섹션 안에 실행 버튼이 있어야 합니다.');
         assert(preview, '워크숍 섹션 안에 preview 컨테이너가 있어야 합니다.');
         assert(
-          section.textContent.includes('최종 챌린지: 나만의 React 학습 카드 앱 만들기'),
+          section.textContent.includes('나만의 React 학습 카드 앱 만들기'),
           '워크숍 섹션 안에 챌린지 카드가 함께 렌더링돼야 합니다.',
         );
 
-        textarea.value = WORKSHOP_PRACTICE.answerCode;
+        textarea.value = WORKSHOP_TEST_CODE;
         runButton.click();
 
         const previewText = preview.textContent;
 
         assert(
           previewText.includes('React 학습 카드'),
-          'answer code 실행 뒤 preview에 앱 제목이 보여야 합니다.',
+          '완성 코드 실행 뒤 preview에 앱 제목이 보여야 합니다.',
         );
         assert(
           previewText.includes('현재 선택된 스킬: Component'),
-          'answer code 실행 뒤 기본 선택 상태가 보여야 합니다.',
+          '완성 코드 실행 뒤 기본 선택 상태가 보여야 합니다.',
         );
 
-        return '워크숍 섹션의 playground가 answer code를 실제 preview 화면으로 렌더링했습니다.';
+        return '워크숍 섹션의 playground가 완성 코드를 실제 preview 화면으로 렌더링했습니다.';
       } finally {
         cleanupSandbox(sandbox);
       }
@@ -312,14 +355,14 @@ return App;`,
         assert(runButton, '워크숍 섹션 안에 실행 버튼이 있어야 합니다.');
         assert(preview, '워크숍 섹션 안에 preview 컨테이너가 있어야 합니다.');
 
-        textarea.value = WORKSHOP_PRACTICE.answerCode;
+        textarea.value = WORKSHOP_TEST_CODE;
         runButton.click();
 
         const hooksButton = Array.from(preview.querySelectorAll('button')).find(
           (button) => button.textContent === 'Hooks',
         );
 
-        assert(hooksButton, 'answer code 실행 뒤 preview 안에 Hooks 버튼이 있어야 합니다.');
+        assert(hooksButton, '완성 코드 실행 뒤 preview 안에 Hooks 버튼이 있어야 합니다.');
         triggerClick(hooksButton);
 
         assert(
@@ -363,8 +406,8 @@ return App;`,
           'vdom 섹션에는 diffVisualizer가 실제로 렌더링되어야 합니다.',
         );
         assert(
-          sandbox.textContent.includes('챌린지: 같은 카드 두 번 재사용하기') &&
-            sandbox.textContent.includes('최종 챌린지: 나만의 React 학습 카드 앱 만들기'),
+          sandbox.textContent.includes('같은 카드 두 번 재사용하기') &&
+            sandbox.textContent.includes('나만의 React 학습 카드 앱 만들기'),
           '처음 섹션과 마지막 섹션의 챌린지 카드가 모두 보여야 합니다.',
         );
 

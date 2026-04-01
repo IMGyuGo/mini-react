@@ -10,6 +10,7 @@
 // ============================================================
 
 import { h } from '../framework/createElement.js';
+import { createChallengeToggle } from '../ui/contentBlocks.js';
 import { createDiffVisualizer } from '../ui/diffVisualizer.js';
 
 // 학생이 setState 이후의 흐름을 한 줄씩 따라가도록 만든 파이프라인 목록이다.
@@ -57,11 +58,6 @@ const afterTree = h('ul', null,
 
 const expectedChanges = [
   // TODO: 바뀌는 점을 순서대로 적어 보세요.
-];`,
-  answerCode: `const expectedChanges = [
-  '두 번째 li의 텍스트를 "Hooks"에서 "Hooks!"로 바꾼다.',
-  '세 번째 li("Virtual DOM")를 새로 추가한다.',
-  '루트 ul과 첫 번째 li는 그대로 재사용한다.',
 ];`,
 };
 
@@ -119,7 +115,7 @@ const VDOM_SCENARIOS = [
 ];
 
 const VDOM_CHALLENGE = {
-  title: '챌린지: 어떤 patch가 필요할까?',
+  title: '어떤 patch가 필요할까?',
   goal: '이전 트리와 다음 트리를 비교해 어떤 patch가 필요한지 순서대로 예상해 보세요.',
   tasks: [
     '어떤 노드는 그대로 재사용되고, 어떤 노드만 바뀌는지 먼저 표시한다.',
@@ -134,6 +130,8 @@ const VDOM_CHALLENGE = {
   ],
   hint: '루트에서부터 같은 태그끼리 차례대로 비교하고, 바뀐 텍스트와 새로 생긴 노드를 따로 생각해 보세요.',
 };
+
+const VDOM_CHALLENGES = [VDOM_CHALLENGE];
 
 // 섹션 4 전체를 조립하는 공개 함수다.
 // 코드 예시, 실제 시각화, patch 예측 과제를 한 흐름으로 이어 준다.
@@ -161,8 +159,12 @@ export function createVdomSection() {
   section.appendChild(createCodeCard('챌린지 예시: 다음 트리', AFTER_TREE_EXAMPLE));
   section.appendChild(createVisualizerCard());
   section.appendChild(createCodeCard('직접 해보기 starter code', VDOM_PRACTICE.starterCode));
-  section.appendChild(createCodeCard('한 가지 가능한 답안', VDOM_PRACTICE.answerCode));
-  section.appendChild(createChallengeCard(VDOM_CHALLENGE));
+  for (const [index, challenge] of VDOM_CHALLENGES.entries()) {
+    section.appendChild(createChallengeToggle({
+      number: index + 1,
+      ...challenge,
+    }));
+  }
 
   return section;
 }
@@ -273,47 +275,6 @@ function createVisualizerCard() {
 
   article.append(intro, buttonRow, scenarioHeading, scenarioSummary, focusHeading, focusList, visualizer.element);
   return article;
-}
-
-// patch 예측 문제를 실제 과제 카드처럼 보여 주는 helper다.
-function createChallengeCard({ title, goal, tasks, success, hint }) {
-  const article = createCardShell(title);
-
-  article.appendChild(createDetailParagraph('문제 목표', goal));
-  article.appendChild(createDetailList('학생이 해야 할 일', tasks));
-  article.appendChild(createDetailList('성공 기준', success));
-  article.appendChild(createDetailParagraph('힌트', hint));
-
-  return article;
-}
-
-function createDetailParagraph(title, text) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const paragraph = document.createElement('p');
-
-  heading.textContent = title;
-  paragraph.textContent = text;
-  wrapper.append(heading, paragraph);
-
-  return wrapper;
-}
-
-function createDetailList(title, items) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const list = document.createElement('ul');
-
-  heading.textContent = title;
-
-  for (const item of items) {
-    const li = document.createElement('li');
-    li.textContent = item;
-    list.appendChild(li);
-  }
-
-  wrapper.append(heading, list);
-  return wrapper;
 }
 
 // 카드 공통 껍데기 helper다.

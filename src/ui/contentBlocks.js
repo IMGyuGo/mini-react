@@ -305,6 +305,44 @@ export function createCodeBlock(code, language = 'js') {
 }
 
 // ------------------------------------------------------------
+// createChallengeToggle(options)
+// ------------------------------------------------------------
+// 챌린지를 기본적으로 접어 두는 토글 블록이다.
+// 문제가 많아질수록 한 번에 다 펼쳐지지 않게 만드는 데 유용하다.
+// ------------------------------------------------------------
+export function createChallengeToggle(options = {}) {
+  const {
+    number = 1,
+    title = '',
+    goal = '',
+    tasks = [],
+    success = [],
+    hint = '',
+  } = options;
+
+  const details = document.createElement('details');
+  const summary = document.createElement('summary');
+  const body = document.createElement('div');
+
+  details.className = 'learning-subsection challenge-toggle';
+  summary.className = 'challenge-toggle-summary';
+  body.className = 'challenge-toggle-body';
+  summary.textContent = `챌린지 ${number}`;
+
+  if (title) {
+    body.appendChild(createChallengeTextBlock('문제 초점', title));
+  }
+
+  body.appendChild(createChallengeTextBlock('문제 목표', goal));
+  body.appendChild(createChallengeListBlock('학생이 해야 할 일', tasks));
+  body.appendChild(createChallengeListBlock('성공 기준', success));
+  body.appendChild(createChallengeTextBlock('힌트', hint));
+
+  details.append(summary, body);
+  return details;
+}
+
+// ------------------------------------------------------------
 // createRecap(items)
 // ------------------------------------------------------------
 // 섹션 마지막에 쓰는 "요약 정리" 박스를 만든다.
@@ -356,4 +394,33 @@ function appendContent(target, content) {
 
   // 문자열이나 숫자는 글자로 바꿔서 넣는다.
   target.textContent = String(content ?? '');
+}
+
+function createChallengeTextBlock(title, text) {
+  const wrapper = document.createElement('div');
+  const heading = document.createElement('h4');
+  const paragraph = document.createElement('p');
+
+  heading.textContent = title;
+  paragraph.textContent = String(text ?? '');
+  wrapper.append(heading, paragraph);
+
+  return wrapper;
+}
+
+function createChallengeListBlock(title, items = []) {
+  const wrapper = document.createElement('div');
+  const heading = document.createElement('h4');
+  const list = document.createElement('ul');
+
+  heading.textContent = title;
+
+  for (const item of items) {
+    const li = document.createElement('li');
+    li.textContent = item;
+    list.appendChild(li);
+  }
+
+  wrapper.append(heading, list);
+  return wrapper;
 }

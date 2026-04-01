@@ -124,7 +124,6 @@ const COMMON_SUBSECTION_EMOJIS = {
   '워크숍 목표': '🎯',
   '어떤 순서로 만들면 좋은가': '🗺️',
   '완성 목표 예시': '🧱',
-  '한 가지 가능한 답안': '✅',
 };
 
 const SECTION_SPECIFIC_SUBSECTION_EMOJIS = {
@@ -426,6 +425,16 @@ function renderCurrentSection(ui, sections, index) {
 
   // 오른쪽 rail도 현재 챕터에 맞는 실습으로 교체한다.
   renderPracticeRail(ui.practiceSlot, currentSection.practice);
+
+  // 챕터를 바꿀 때는 가운데 stage와 오른쪽 rail을 모두 맨 위로 돌린다.
+  // 그래야 이전 챕터에서 내려 읽던 스크롤 위치가 다음 챕터에 남지 않는다.
+  if (ui.stage) {
+    ui.stage.scrollTop = 0;
+  }
+
+  if (ui.practiceRail) {
+    ui.practiceRail.scrollTop = 0;
+  }
 
   // 주소창 hash도 현재 챕터 id로 맞춰 둔다.
   // 이렇게 하면 새로고침해도 같은 챕터부터 다시 열 수 있다.

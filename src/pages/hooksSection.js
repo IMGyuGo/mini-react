@@ -8,6 +8,7 @@
 // 동작을 확인할 수 있게 구성했다.
 // ============================================================
 
+import { createChallengeToggle } from '../ui/contentBlocks.js';
 import { createPracticePlaygroundCard } from './practicePlayground.js';
 
 // 섹션 맨 위에서 학생에게 보여줄 학습 목표다.
@@ -60,22 +61,6 @@ return Counter;`,
       '감소 버튼을 하나 더 만들어 같은 state를 여러 이벤트에서 바꿔 본다.',
       'count * 2 값을 함께 출력해서 한 state를 여러 DOM 노드가 같이 읽는 모습을 확인한다.',
     ],
-    answerCode: `function Counter() {
-  const [count, setCount] = useState(0);
-
-  return h('section', null,
-    h('p', null, '현재 숫자: ' + count),
-    h('p', null, count % 2 === 0 ? '짝수입니다.' : '홀수입니다.'),
-    h('button', {
-      onclick: () => setCount(count + 1),
-    }, '+1'),
-    h('button', {
-      onclick: () => setCount(count - 1),
-    }, '-1')
-  );
-}
-
-return Counter;`,
     challenge:
       '카운트 숫자 아래에 짝수/홀수 문구를 추가해서 state 변화가 화면 여러 곳에 동시에 반영되게 만들어 보세요.',
   },
@@ -117,40 +102,6 @@ return WelcomeLogger;`,
       '`[name]`을 유지한 채 입력값을 바꿨을 때 어떤 순간에 아래 effect 문구가 바뀌는지 말로 설명해 본다.',
       '의존성 배열을 없애면 왜 매 렌더링마다 effect가 실행되는지 친구에게 설명해 본다.',
     ],
-    answerCode: `function WelcomeLogger() {
-  const [name, setName] = useState('정글');
-  const [track, setTrack] = useState('Frontend');
-
-  useEffect(() => {
-    const log = previewContainer.querySelector('[data-effect-log]');
-
-    if (log) {
-      log.textContent = 'effect가 마지막으로 본 이름: ' + name;
-    }
-  }, [name]);
-
-  return h('section', null,
-    h('label', null,
-      '이름',
-      h('input', {
-        value: name,
-        oninput: (event) => setName(event.target.value),
-      })
-    ),
-    h('label', null,
-      '트랙',
-      h('input', {
-        value: track,
-        oninput: (event) => setTrack(event.target.value),
-      })
-    ),
-    h('p', null, '안녕하세요, ' + name),
-    h('p', null, '트랙: ' + track),
-    h('p', { 'data-effect-log': 'true' }, 'effect가 아직 실행되지 않았습니다.')
-  );
-}
-
-return WelcomeLogger;`,
     challenge:
       'name 말고 track state를 하나 더 추가하고, 이름이 바뀔 때만 effect 문구가 바뀌도록 deps를 설계해 보세요.',
   },
@@ -198,45 +149,6 @@ return App;`,
       '탭만 바꾸면 왜 화면은 다시 그리지만 총점 계산은 다시 안 해도 되는지 말로 설명해 본다.',
       '점수를 추가했을 때만 계산 횟수가 늘어나는지 직접 눌러 확인해 본다.',
     ],
-    answerCode: `let totalRuns = 0;
-let maxRuns = 0;
-
-function ScoreSummary(props) {
-  const total = useMemo(() => {
-    totalRuns += 1;
-    return props.scores.reduce((sum, score) => sum + score, 0);
-  }, [props.scores]);
-
-  const max = useMemo(() => {
-    maxRuns += 1;
-    return props.scores.reduce((best, score) => Math.max(best, score), 0);
-  }, [props.scores]);
-
-  return h('section', null,
-    h('p', null, '총점: ' + total),
-    h('p', null, '최고점: ' + max),
-    h('p', null, '총점 계산 횟수: ' + totalRuns),
-    h('p', null, '최고점 계산 횟수: ' + maxRuns)
-  );
-}
-
-function App() {
-  const [tab, setTab] = useState('summary');
-  const [scores, setScores] = useState([10, 20, 30]);
-
-  return h('section', null,
-    h('button', {
-      onclick: () => setTab(tab === 'summary' ? 'details' : 'summary'),
-    }, '탭 바꾸기'),
-    h('button', {
-      onclick: () => setScores([...scores, 5]),
-    }, '점수 추가'),
-    h('p', null, '현재 탭: ' + tab),
-    h(ScoreSummary, { scores: scores })
-  );
-}
-
-return App;`,
     challenge:
       '총점과 최고점을 각각 따로 memo로 계산하고, scores가 바뀔 때만 다시 계산되게 구성해 보세요.',
   },
@@ -244,7 +156,7 @@ return App;`,
 
 const HOOK_TEST_CHALLENGES = [
   {
-    title: '훅 테스트 1: useState가 값을 기억하는지 확인하기',
+    title: 'useState가 값을 기억하는지 확인하기',
     goal: '하나의 count state가 여러 UI 조각에 동시에 반영되면서도, 다시 렌더링돼도 값이 유지되는지 보여 주세요.',
     tasks: [
       'count를 보여 주는 문장을 두 곳 이상 만든다.',
@@ -259,7 +171,7 @@ const HOOK_TEST_CHALLENGES = [
     hint: '새 state를 여러 개 만들기보다 count 하나를 여러 출력에 연결하는 구성이 더 핵심을 잘 보여 줍니다.',
   },
   {
-    title: '훅 테스트 2: useEffect 실행 타이밍 확인하기',
+    title: 'useEffect 실행 타이밍 확인하기',
     goal: 'name이 바뀔 때만 effect가 다시 실행되고, 다른 state 변경에는 반응하지 않는 장면을 보여 주세요.',
     tasks: [
       'name과 track처럼 서로 다른 state 두 개를 준비한다.',
@@ -274,7 +186,7 @@ const HOOK_TEST_CHALLENGES = [
     hint: '핵심은 state를 두 개 두고, effect가 어떤 값만 바라보는지 차이를 눈으로 보이게 만드는 것입니다.',
   },
   {
-    title: '훅 테스트 3: useMemo 재계산 조건 확인하기',
+    title: 'useMemo 재계산 조건 확인하기',
     goal: '화면은 다시 렌더링돼도, memo 계산은 의존한 값이 바뀔 때만 다시 실행되는지 확인해 보세요.',
     tasks: [
       'tab처럼 화면만 바꾸는 state와 scores처럼 계산에 쓰는 state를 함께 둔다.',
@@ -338,8 +250,11 @@ export function createHooksSection() {
     ),
   );
 
-  for (const challenge of HOOK_TEST_CHALLENGES) {
-    section.appendChild(createChallengeCard(challenge));
+  for (const [index, challenge] of HOOK_TEST_CHALLENGES.entries()) {
+    section.appendChild(createChallengeToggle({
+      number: index + 1,
+      ...challenge,
+    }));
   }
 
   return section;
@@ -395,7 +310,6 @@ function createHookLessonCard({
   playgroundDescription,
   starterCode,
   tryIt,
-  answerCode,
   challenge,
 }) {
   const article = createCardShell(name);
@@ -414,29 +328,7 @@ function createHookLessonCard({
     }),
   );
   article.appendChild(createDetailList('직접 해보기', tryIt));
-  article.appendChild(createDetailCodeBlock('한 가지 가능한 답안', createCodeBlock(answerCode)));
   article.appendChild(createDetailParagraph('챌린지', challenge));
-
-  return article;
-}
-
-// 작은 제목(h4) + 본문(p) 조합을 만드는 세부 helper다.
-// 큰 카드 안에서 소제목을 나눌 때 사용한다.
-function createChallengeCard({ title, goal, tasks, success, hint }) {
-  const article = createCardShell(title);
-
-  /*
-
-  article.appendChild(createDetailParagraph('臾몄젣 紐⑺몴', goal));
-  article.appendChild(createDetailList('?숈깮???댁빞 ????, tasks));
-  article.appendChild(createDetailList('?깃났 湲곗?', success));
-  article.appendChild(createDetailParagraph('?뚰듃', hint));
-
-  */
-  article.appendChild(createDetailParagraph('Goal', goal));
-  article.appendChild(createDetailList('Checkpoints', tasks));
-  article.appendChild(createDetailList('Success Criteria', success));
-  article.appendChild(createDetailParagraph('Hint', hint));
 
   return article;
 }
@@ -462,17 +354,6 @@ function createDetailCodeBlock(title, content) {
   wrapper.append(heading, content);
 
   return wrapper;
-}
-
-// 코드 문자열을 <pre><code> DOM으로 감싸 주는 helper다.
-function createCodeBlock(codeText) {
-  const pre = document.createElement('pre');
-  const code = document.createElement('code');
-
-  code.textContent = codeText;
-  pre.appendChild(code);
-
-  return pre;
 }
 
 // "직접 해보기" 같은 실습 단계 목록을 그리는 helper다.

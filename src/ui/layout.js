@@ -62,47 +62,81 @@ export function createLayout(root) {
     })
     .join('');
 
+  const githubPillMarkup = `
+    <a
+      class="hero-pill hero-pill-github"
+      href="https://github.com/galatea999/jungle-week5-React"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="GitHub 저장소 열기"
+    >
+      <svg
+        class="hero-pill-icon"
+        viewBox="0 0 24 24"
+        role="img"
+        aria-hidden="true"
+      >
+        <path
+          fill="currentColor"
+          d="M12 1.5a10.5 10.5 0 0 0-3.322 20.46c.525.098.713-.228.713-.507 0-.25-.01-1.085-.014-1.968-2.9.63-3.512-1.23-3.512-1.23-.474-1.205-1.158-1.526-1.158-1.526-.947-.648.071-.635.071-.635 1.047.074 1.598 1.075 1.598 1.075.93 1.594 2.439 1.133 3.034.867.094-.674.364-1.134.662-1.394-2.316-.264-4.752-1.158-4.752-5.154 0-1.138.407-2.069 1.074-2.799-.108-.264-.465-1.327.102-2.766 0 0 .876-.28 2.871 1.07a9.96 9.96 0 0 1 5.228 0c1.993-1.35 2.867-1.07 2.867-1.07.57 1.439.212 2.502.104 2.766.669.73 1.072 1.661 1.072 2.799 0 4.006-2.44 4.886-4.763 5.145.374.323.707.956.707 1.928 0 1.393-.012 2.516-.012 2.858 0 .282.186.61.72.506A10.5 10.5 0 0 0 12 1.5Z"
+        ></path>
+      </svg>
+      <span>GitHub</span>
+    </a>
+  `;
+
   root.innerHTML = `
     <main class="nexus-shell learning-shell">
-      <header class="hero learning-hero">
-        <div class="hero-copy">
-          <p class="eyebrow">React Learning</p>
-          <div class="hero-title-row">
-            <svg
-              class="react-mark react-mark-inline"
-              viewBox="0 0 256 256"
-              role="img"
-              aria-label="React logo"
-            >
-              <circle class="react-mark-core" cx="128" cy="128" r="18"></circle>
-              <ellipse class="react-mark-orbit" cx="128" cy="128" rx="92" ry="36"></ellipse>
-              <ellipse
-                class="react-mark-orbit"
-                cx="128"
-                cy="128"
-                rx="92"
-                ry="36"
-                transform="rotate(60 128 128)"
-              ></ellipse>
-              <ellipse
-                class="react-mark-orbit"
-                cx="128"
-                cy="128"
-                rx="92"
-                ry="36"
-                transform="rotate(120 128 128)"
-              ></ellipse>
-            </svg>
-            <h1>What is React?</h1>
-          </div>
-
-          <div class="hero-pills" aria-label="React 공식 학습 링크">
-            ${heroPillsMarkup}
-          </div>
-        </div>
-      </header>
-
       <section class="main-grid learning-grid">
+        <header class="hero learning-hero learning-hero-banner">
+          <div class="hero-copy hero-copy-inline">
+            <div class="hero-title-row">
+              <svg
+                class="react-mark react-mark-inline"
+                viewBox="0 0 256 256"
+                role="img"
+                aria-label="React logo"
+              >
+                <circle class="react-mark-core" cx="128" cy="128" r="18"></circle>
+                <ellipse class="react-mark-orbit" cx="128" cy="128" rx="92" ry="36"></ellipse>
+                <ellipse
+                  class="react-mark-orbit"
+                  cx="128"
+                  cy="128"
+                  rx="92"
+                  ry="36"
+                  transform="rotate(60 128 128)"
+                ></ellipse>
+                <ellipse
+                  class="react-mark-orbit"
+                  cx="128"
+                  cy="128"
+                  rx="92"
+                  ry="36"
+                  transform="rotate(120 128 128)"
+                ></ellipse>
+              </svg>
+              <h1>What is React?</h1>
+            </div>
+
+            <nav class="hero-pills" aria-label="React 공식 학습 링크">
+              ${heroPillsMarkup}
+              ${githubPillMarkup}
+            </nav>
+
+            <div class="hero-utility">
+              <a
+                class="hero-test-link"
+                href="./tests/framework.test.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Test Page
+              </a>
+            </div>
+          </div>
+        </header>
+
         <aside class="panel-card learning-sidebar">
           <p class="sidebar-label">Roadmap</p>
           <h2>학습 순서</h2>
@@ -134,6 +168,8 @@ export function createLayout(root) {
   return {
     // 왼쪽 챕터 메뉴 영역이다.
     nav: root.querySelector('#learning-nav'),
+    // 가운데 stage 전체 영역이다.
+    stage: root.querySelector('.learning-stage'),
     // 실제 현재 챕터가 렌더링될 영역이다.
     content: root.querySelector('#learning-content'),
     // 예전 상단 상태 카드 자리다.
@@ -145,6 +181,8 @@ export function createLayout(root) {
     chapterTitle: root.querySelector('#chapter-title'),
     // 현재 챕터 한 줄 설명이다.
     chapterSummary: root.querySelector('#chapter-summary'),
+    // 오른쪽 실습 rail 전체 영역이다.
+    practiceRail: root.querySelector('.learning-practice-rail'),
     // 오른쪽 실습 rail에 playground를 꽂을 자리다.
     practiceSlot: root.querySelector('#practice-rail-slot'),
   };
