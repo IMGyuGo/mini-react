@@ -14,7 +14,7 @@
 // 3. playground에서 바로 실행할 starter code와 답안 예시를 함께 준비한다.
 // ============================================================
 
-import { createAnswerToggle } from '../ui/contentBlocks.js';
+import { createChallengeToggle } from '../ui/contentBlocks.js';
 import { createPracticePlaygroundCard } from './practicePlayground.js';
 
 // 이 목록은 "이번 섹션에서 무엇을 배우는가?" 카드에 그대로 들어간다.
@@ -53,7 +53,7 @@ function App() {
 // 같은 ProfileCard를 여러 번 호출해도,
 // 컴포넌트 정의는 하나고 데이터만 바뀐다는 점을 직접 느끼게 만드는 문제다.
 const COMPONENT_CHALLENGE = {
-  title: '챌린지: 같은 카드 두 번 재사용하기',
+  title: '같은 카드 두 번 재사용하기',
   goal: 'ProfileCard 하나를 재사용해서 서로 다른 두 학습자의 프로필 카드를 화면에 보여 주세요.',
   tasks: [
     'App에서 ProfileCard를 두 번 호출하고 props 값만 다르게 넣어 본다.',
@@ -74,7 +74,7 @@ const COMPONENT_CHALLENGE = {
 const COMPONENT_CHALLENGES = [
   COMPONENT_CHALLENGE,
   {
-    title: '컴포넌트 테스트 2: props만 바꿔 소개 문장 달라지게 만들기',
+    title: 'props만 바꿔 소개 문장 달라지게 만들기',
     goal: '카드 모양은 그대로 두고, props에 따라 카드 안 소개 문장이 달라지도록 만들어 보세요.',
     tasks: [
       'ProfileCard에 intro 또는 badge 같은 새 props를 추가한다.',
@@ -89,7 +89,7 @@ const COMPONENT_CHALLENGES = [
     hint: '모양을 바꾸기보다 props 한두 개를 더 받아서 텍스트만 달라지게 만드는 쪽이 핵심입니다.',
   },
   {
-    title: '컴포넌트 테스트 3: 부모가 카드 목록을 조립하는지 보여주기',
+    title: '부모가 카드 목록을 조립하는지 보여주기',
     goal: 'App이 카드 목록 전체를 조립하고, ProfileCard는 카드 한 장만 책임지도록 역할을 나눠 보세요.',
     tasks: [
       'App 안에 섹션 제목이나 안내 문장을 추가한다.',
@@ -124,30 +124,6 @@ function App() {
 }
 
 return App;`,
-  answerCode: `function ProfileCard(props) {
-  return h('article', { class: 'profile-card' },
-    h('h3', null, props.name),
-    h('p', null, props.job),
-    h('p', null, '트랙: ' + props.track)
-  );
-}
-
-function App() {
-  return h('section', { class: 'card-list' },
-    h(ProfileCard, {
-      name: '김정글',
-      job: '프론트엔드 학습자',
-      track: 'Frontend',
-    }),
-    h(ProfileCard, {
-      name: '박리액트',
-      job: 'UI 실험가',
-      track: 'Interaction',
-    })
-  );
-}
-
-return App;`,
 };
 
 // ------------------------------------------------------------
@@ -164,8 +140,7 @@ return App;`,
 //   3. 개념 설명
 //   4. 읽는 예제 코드
 //   5. 직접 해보기 starter code
-//   6. 한 가지 가능한 답안
-//   7. 학생이 스스로 풀어 볼 챌린지
+//   6. 학생이 스스로 풀어 볼 챌린지
 // ------------------------------------------------------------
 export function createComponentSection() {
   const section = document.createElement('section');
@@ -192,9 +167,11 @@ export function createComponentSection() {
     description: '같은 ProfileCard를 한 번 더 호출해 보고, props만 바꿨을 때 카드가 어떻게 달라지는지 확인해 보세요.',
     initialCode: COMPONENT_PRACTICE.starterCode,
   }));
-  section.appendChild(createAnswerCard('한 가지 가능한 답안', COMPONENT_PRACTICE.answerCode));
-  for (const challenge of COMPONENT_CHALLENGES) {
-    section.appendChild(createChallengeCard(challenge));
+  for (const [index, challenge] of COMPONENT_CHALLENGES.entries()) {
+    section.appendChild(createChallengeToggle({
+      number: index + 1,
+      ...challenge,
+    }));
   }
 
   return section;
@@ -252,59 +229,6 @@ function createCodeCard(title, code) {
   pre.appendChild(codeEl);
   card.appendChild(pre);
   return card;
-}
-
-// 답안 카드는 기본적으로 접어 두어,
-// 학생이 실습을 먼저 시도하게 만드는 helper다.
-function createAnswerCard(title, code) {
-  const card = createCardShell(title);
-
-  card.appendChild(createAnswerToggle(code));
-  return card;
-}
-
-// 챌린지 문제를 실제 과제처럼 읽히게 만드는 카드 helper다.
-// 단순 한 줄 문구 대신 목표, 할 일, 성공 기준, 힌트를 함께 보여 준다.
-function createChallengeCard({ title, goal, tasks, success, hint }) {
-  const card = createCardShell(title);
-
-  card.appendChild(createDetailParagraph('문제 목표', goal));
-  card.appendChild(createDetailList('학생이 해야 할 일', tasks));
-  card.appendChild(createDetailList('성공 기준', success));
-  card.appendChild(createDetailParagraph('힌트', hint));
-
-  return card;
-}
-
-// 작은 제목과 본문을 한 덩어리로 만드는 helper다.
-function createDetailParagraph(title, text) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const body = document.createElement('p');
-
-  heading.textContent = title;
-  body.textContent = text;
-  wrapper.append(heading, body);
-
-  return wrapper;
-}
-
-// 챌린지의 할 일 / 성공 기준처럼 여러 항목이 필요한 경우에 쓰는 helper다.
-function createDetailList(title, items) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const list = document.createElement('ul');
-
-  heading.textContent = title;
-
-  for (const item of items) {
-    const li = document.createElement('li');
-    li.textContent = item;
-    list.appendChild(li);
-  }
-
-  wrapper.append(heading, list);
-  return wrapper;
 }
 
 // 모든 카드가 공통으로 쓰는 바깥 껍데기다.

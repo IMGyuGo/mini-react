@@ -10,7 +10,7 @@
 // 어떤 부품을 만들고, 최종적으로 어떤 모양이 나와야 하는지를 분명히 보여 준다.
 // ============================================================
 
-import { createAnswerToggle } from '../ui/contentBlocks.js';
+import { createChallengeToggle } from '../ui/contentBlocks.js';
 import { createPracticePlaygroundCard } from './practicePlayground.js';
 
 // 워크숍에서 학생이 직접 만들 조각들이다.
@@ -42,7 +42,7 @@ const WORKSHOP_GOAL = `function App() {
 // 마지막 워크숍은 앞에서 배운 모든 내용을 묶는 종합 미션이다.
 // 그래서 컴포넌트 분리, props 전달, 배열 렌더링, state 변화가 한 번에 들어가도록 설계했다.
 const WORKSHOP_CHALLENGE = {
-  title: '최종 챌린지: 나만의 React 학습 카드 앱 만들기',
+  title: '나만의 React 학습 카드 앱 만들기',
   goal: 'Header, ProfileCard, SkillList를 조립하고 선택된 스킬 상태까지 보여 주는 작은 앱을 완성해 보세요.',
   tasks: [
     'Header 컴포넌트가 title props를 받아 상단 제목을 렌더링하게 만든다.',
@@ -58,6 +58,8 @@ const WORKSHOP_CHALLENGE = {
   ],
   hint: '먼저 정적인 화면을 완성한 뒤, 마지막 단계에서 selectedSkill state와 클릭 이벤트를 붙이면 훨씬 수월합니다.',
 };
+
+const WORKSHOP_CHALLENGES = [WORKSHOP_CHALLENGE];
 
 // 마지막 섹션은 종합 실습이므로 starter code도 일부러 빈 칸이 남아 있는 형태로 준비한다.
 // 학생은 각 부품을 채워 넣으면서 지금까지 배운 내용을 한 번 더 정리하게 된다.
@@ -97,51 +99,6 @@ function App() {
 }
 
 return App;`,
-  answerCode: `function Header(props) {
-  return h('header', null,
-    h('h2', null, props.title)
-  );
-}
-
-function ProfileCard(props) {
-  return h('article', { class: 'profile-card' },
-    h('h3', null, props.name),
-    h('p', null, '트랙: ' + props.track),
-    h('p', null, props.intro)
-  );
-}
-
-function SkillList(props) {
-  return h('ul', null,
-    ...props.skills.map((skill) =>
-      h('li', null,
-        h('button', {
-          onclick: () => props.onSelect(skill),
-        }, skill)
-      )
-    )
-  );
-}
-
-function App() {
-  const [selectedSkill, setSelectedSkill] = useState('Component');
-
-  return h('main', { class: 'profile-app' },
-    h(Header, { title: 'React 학습 카드' }),
-    h(ProfileCard, {
-      name: '정글',
-      track: 'Frontend',
-      intro: '작은 컴포넌트를 조립하는 중입니다.',
-    }),
-    h(SkillList, {
-      skills: ['Component', 'State', 'Hooks'],
-      onSelect: setSelectedSkill,
-    }),
-    h('p', null, '현재 선택된 스킬: ' + selectedSkill)
-  );
-}
-
-return App;`,
 };
 
 // 섹션 5 전체를 조립하는 공개 함수다.
@@ -168,8 +125,12 @@ export function createWorkshopSection() {
     description: '먼저 정적인 카드 앱을 만든 뒤, 마지막에 selectedSkill state와 클릭 이벤트를 붙여 보세요.',
     initialCode: WORKSHOP_PRACTICE.starterCode,
   }));
-  section.appendChild(createAnswerCard('한 가지 가능한 답안', WORKSHOP_PRACTICE.answerCode));
-  section.appendChild(createChallengeCard(WORKSHOP_CHALLENGE));
+  for (const [index, challenge] of WORKSHOP_CHALLENGES.entries()) {
+    section.appendChild(createChallengeToggle({
+      number: index + 1,
+      ...challenge,
+    }));
+  }
 
   return section;
 }
@@ -224,55 +185,6 @@ function createCodeCard(title, code) {
   article.appendChild(pre);
 
   return article;
-}
-
-// 답안 카드는 토글 형태로 감춰 둔다.
-function createAnswerCard(title, code) {
-  const article = createCardShell(title);
-
-  article.appendChild(createAnswerToggle(code));
-  return article;
-}
-
-// 종합 워크숍용 챌린지 카드를 만드는 helper다.
-function createChallengeCard({ title, goal, tasks, success, hint }) {
-  const article = createCardShell(title);
-
-  article.appendChild(createDetailParagraph('문제 목표', goal));
-  article.appendChild(createDetailList('학생이 해야 할 일', tasks));
-  article.appendChild(createDetailList('성공 기준', success));
-  article.appendChild(createDetailParagraph('힌트', hint));
-
-  return article;
-}
-
-function createDetailParagraph(title, text) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const paragraph = document.createElement('p');
-
-  heading.textContent = title;
-  paragraph.textContent = text;
-  wrapper.append(heading, paragraph);
-
-  return wrapper;
-}
-
-function createDetailList(title, items) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const list = document.createElement('ul');
-
-  heading.textContent = title;
-
-  for (const item of items) {
-    const li = document.createElement('li');
-    li.textContent = item;
-    list.appendChild(li);
-  }
-
-  wrapper.append(heading, list);
-  return wrapper;
 }
 
 // 카드 공통 껍데기 helper다.

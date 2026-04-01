@@ -62,6 +62,29 @@ export function createLayout(root) {
     })
     .join('');
 
+  const githubPillMarkup = `
+    <a
+      class="hero-pill hero-pill-github"
+      href="https://github.com/galatea999/jungle-week5-React"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="GitHub 저장소 열기"
+    >
+      <svg
+        class="hero-pill-icon"
+        viewBox="0 0 24 24"
+        role="img"
+        aria-hidden="true"
+      >
+        <path
+          fill="currentColor"
+          d="M12 1.5a10.5 10.5 0 0 0-3.322 20.46c.525.098.713-.228.713-.507 0-.25-.01-1.085-.014-1.968-2.9.63-3.512-1.23-3.512-1.23-.474-1.205-1.158-1.526-1.158-1.526-.947-.648.071-.635.071-.635 1.047.074 1.598 1.075 1.598 1.075.93 1.594 2.439 1.133 3.034.867.094-.674.364-1.134.662-1.394-2.316-.264-4.752-1.158-4.752-5.154 0-1.138.407-2.069 1.074-2.799-.108-.264-.465-1.327.102-2.766 0 0 .876-.28 2.871 1.07a9.96 9.96 0 0 1 5.228 0c1.993-1.35 2.867-1.07 2.867-1.07.57 1.439.212 2.502.104 2.766.669.73 1.072 1.661 1.072 2.799 0 4.006-2.44 4.886-4.763 5.145.374.323.707.956.707 1.928 0 1.393-.012 2.516-.012 2.858 0 .282.186.61.72.506A10.5 10.5 0 0 0 12 1.5Z"
+        ></path>
+      </svg>
+      <span>GitHub</span>
+    </a>
+  `;
+
   root.innerHTML = `
     <main class="nexus-shell learning-shell">
       <section class="main-grid learning-grid">
@@ -98,7 +121,19 @@ export function createLayout(root) {
 
             <nav class="hero-pills" aria-label="React 공식 학습 링크">
               ${heroPillsMarkup}
+              ${githubPillMarkup}
             </nav>
+
+            <div class="hero-utility">
+              <a
+                class="hero-test-link"
+                href="./tests/framework.test.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Test Page
+              </a>
+            </div>
           </div>
         </header>
 

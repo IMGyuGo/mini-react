@@ -279,6 +279,7 @@ code {
 .hero-pill {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   border: 1px solid rgba(97, 218, 251, 0.24);
   border-radius: 999px;
   background: rgba(97, 218, 251, 0.12);
@@ -303,6 +304,52 @@ code {
 }
 
 .hero-pill:focus-visible {
+  outline: 2px solid rgba(97, 218, 251, 0.95);
+  outline-offset: 3px;
+}
+
+.hero-pill-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
+.hero-utility {
+  display: flex;
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-items: center;
+}
+
+.hero-test-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f4fbff;
+  white-space: nowrap;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.hero-test-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(97, 218, 251, 0.42);
+  background: rgba(97, 218, 251, 0.18);
+  box-shadow: 0 10px 24px rgba(8, 126, 164, 0.18);
+}
+
+.hero-test-link:focus-visible {
   outline: 2px solid rgba(97, 218, 251, 0.95);
   outline-offset: 3px;
 }
@@ -809,7 +856,6 @@ code {
 .you-will-learn,
 .note-block,
 .deep-dive,
-.answer-toggle,
 .recap-block,
 .challenge-block {
   margin-top: 14px;
@@ -869,63 +915,78 @@ code {
   line-height: 1.75;
 }
 
-.answer-toggle {
-  margin-top: 12px;
-  border-style: dashed;
-  border-color: rgba(8, 126, 164, 0.18);
-  background: linear-gradient(180deg, rgba(230, 247, 255, 0.62), rgba(255, 255, 255, 0.94));
-  overflow: hidden;
+.challenge-toggle {
+  margin-top: 0;
 }
 
-.answer-toggle summary {
+.challenge-toggle-summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   cursor: pointer;
   list-style: none;
-  padding: 14px 16px;
+  padding: 4px 0;
+  color: var(--text);
+  font-size: 23px;
   font-weight: 800;
-  color: var(--accent-strong);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.answer-toggle summary::-webkit-details-marker {
+.challenge-toggle-summary::-webkit-details-marker {
   display: none;
 }
 
-.answer-toggle summary::after {
+.challenge-toggle-summary::after {
   content: '열기';
   flex: 0 0 auto;
-  border: 1px solid rgba(8, 126, 164, 0.18);
+  border: 1px solid rgba(240, 209, 139, 0.9);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.84);
-  color: var(--text);
+  background: rgba(255, 248, 236, 0.96);
+  color: #7a5a14;
   padding: 6px 10px;
   font-size: 12px;
   line-height: 1;
 }
 
-.answer-toggle[open] summary::after {
+.challenge-toggle[open] .challenge-toggle-summary::after {
   content: '닫기';
 }
 
-.answer-toggle-body {
+.challenge-toggle-body {
   display: grid;
-  gap: 12px;
-  border-top: 1px solid rgba(8, 126, 164, 0.12);
-  background: rgba(255, 255, 255, 0.82);
-  padding: 14px 16px 16px;
+  gap: 14px;
+  margin-top: 14px;
+  border: 1px solid rgba(240, 209, 139, 0.7);
+  border-radius: var(--radius-md);
+  background: rgba(255, 248, 236, 0.68);
+  padding: 16px;
 }
 
-.answer-toggle-note {
+.challenge-toggle-body > div {
+  display: grid;
+  gap: 8px;
+}
+
+.challenge-toggle-body h4,
+.challenge-toggle-body p,
+.challenge-toggle-body ul {
   margin: 0;
+}
+
+.challenge-toggle-body ul {
+  padding-left: 22px;
+}
+
+.challenge-toggle-body li {
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
-.answer-toggle .code-block {
-  margin: 0;
+.challenge-toggle-body p {
+  color: var(--muted);
+  line-height: 1.75;
 }
 
 .challenge-block {
@@ -1386,6 +1447,12 @@ code {
 
   .hero-pills {
     flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-utility {
+    width: 100%;
+    margin-left: 0;
     justify-content: center;
   }
 

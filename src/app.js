@@ -124,7 +124,6 @@ const COMMON_SUBSECTION_EMOJIS = {
   '워크숍 목표': '🎯',
   '어떤 순서로 만들면 좋은가': '🗺️',
   '완성 목표 예시': '🧱',
-  '한 가지 가능한 답안': '✅',
 };
 
 const SECTION_SPECIFIC_SUBSECTION_EMOJIS = {

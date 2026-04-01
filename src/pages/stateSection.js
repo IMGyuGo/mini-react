@@ -9,7 +9,7 @@
 // 학생이 "값을 기억하는 법" 다음에 "그 값을 어디에 둘지"까지 생각하게 만드는 단계다.
 // ============================================================
 
-import { createAnswerToggle } from '../ui/contentBlocks.js';
+import { createChallengeToggle } from '../ui/contentBlocks.js';
 import { createPracticePlaygroundCard } from './practicePlayground.js';
 
 // 학생이 개념을 절차로 이해하도록 돕는 단계 목록이다.
@@ -47,7 +47,7 @@ const TEMPERATURE_EXAMPLE = `function App() {
 // 핵심은 자식이 자기 state를 따로 갖는 대신,
 // 부모 App이 값을 소유하고 props로 내려주는 구조를 스스로 고르는 것이다.
 const STATE_CHALLENGE = {
-  title: '챌린지: 형제 카드가 같은 값 보기',
+  title: '형제 카드가 같은 값 보기',
   goal: 'TemperatureInput과 ResultCard가 App의 같은 temperature state를 공유하도록 구조를 설계해 보세요.',
   tasks: [
     'temperature state를 App 한 곳에만 둔다.',
@@ -68,7 +68,7 @@ const STATE_CHALLENGE = {
 const STATE_CHALLENGES = [
   STATE_CHALLENGE,
   {
-    title: 'State 테스트 2: 입력창 두 개를 완전히 동기화하기',
+    title: '입력창 두 개를 완전히 동기화하기',
     goal: 'TemperatureInput을 두 개 렌더해도 두 입력창과 결과 카드가 항상 같은 temperature state를 보도록 만들어 보세요.',
     tasks: [
       'App에 TemperatureInput을 하나 더 추가한다.',
@@ -83,7 +83,7 @@ const STATE_CHALLENGES = [
     hint: '입력창이 두 개라도 state는 하나만 두고, 두 자식 모두 같은 props를 받게 연결하면 됩니다.',
   },
   {
-    title: 'State 테스트 3: Reset 버튼도 같은 state를 바꾸게 만들기',
+    title: 'Reset 버튼도 같은 state를 바꾸게 만들기',
     goal: '별도의 ResetButton 자식 컴포넌트를 추가해서 입력창과 결과 카드가 함께 초기화되도록 만들어 보세요.',
     tasks: [
       'ResetButton 컴포넌트를 만들고 onReset props를 받게 한다.',
@@ -124,34 +124,6 @@ function App() {
 }
 
 return App;`,
-  answerCode: `function TemperatureInput(props) {
-  return h('label', null,
-    props.label,
-    h('input', {
-      value: props.value,
-      oninput: (event) => props.onChange(event.target.value),
-    })
-  );
-}
-
-function ResultCard(props) {
-  return h('p', null, '현재 온도: ' + props.value);
-}
-
-function App() {
-  const [temperature, setTemperature] = useState('');
-
-  return h('section', null,
-    h(TemperatureInput, {
-      label: '섭씨',
-      value: temperature,
-      onChange: setTemperature,
-    }),
-    h(ResultCard, { value: temperature })
-  );
-}
-
-return App;`,
 };
 
 // 섹션 3 전체를 조립하는 공개 함수다.
@@ -180,9 +152,11 @@ export function createStateSection() {
     description: '입력창은 바뀌지만 아래 카드가 아직 같이 안 바뀝니다. state를 App으로 올려서 두 컴포넌트가 같은 값을 보게 만들어 보세요.',
     initialCode: STATE_PRACTICE.starterCode,
   }));
-  section.appendChild(createAnswerCard('한 가지 가능한 답안', STATE_PRACTICE.answerCode));
-  for (const challenge of STATE_CHALLENGES) {
-    section.appendChild(createChallengeCard(challenge));
+  for (const [index, challenge] of STATE_CHALLENGES.entries()) {
+    section.appendChild(createChallengeToggle({
+      number: index + 1,
+      ...challenge,
+    }));
   }
 
   return section;
@@ -239,57 +213,6 @@ function createCodeCard(title, code) {
   article.appendChild(pre);
 
   return article;
-}
-
-// 답안은 바로 보이지 않게 접어 두는 helper다.
-function createAnswerCard(title, code) {
-  const article = createCardShell(title);
-
-  article.appendChild(createAnswerToggle(code));
-  return article;
-}
-
-// state 학습용 챌린지 카드를 만드는 helper다.
-function createChallengeCard({ title, goal, tasks, success, hint }) {
-  const article = createCardShell(title);
-
-  article.appendChild(createDetailParagraph('문제 목표', goal));
-  article.appendChild(createDetailList('학생이 해야 할 일', tasks));
-  article.appendChild(createDetailList('성공 기준', success));
-  article.appendChild(createDetailParagraph('힌트', hint));
-
-  return article;
-}
-
-// 작은 제목 + 본문 조합 helper다.
-function createDetailParagraph(title, text) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const paragraph = document.createElement('p');
-
-  heading.textContent = title;
-  paragraph.textContent = text;
-  wrapper.append(heading, paragraph);
-
-  return wrapper;
-}
-
-// 여러 할 일이나 성공 조건을 목록으로 보여 주는 helper다.
-function createDetailList(title, items) {
-  const wrapper = document.createElement('div');
-  const heading = document.createElement('h4');
-  const list = document.createElement('ul');
-
-  heading.textContent = title;
-
-  for (const item of items) {
-    const li = document.createElement('li');
-    li.textContent = item;
-    list.appendChild(li);
-  }
-
-  wrapper.append(heading, list);
-  return wrapper;
 }
 
 // 카드 공통 껍데기 helper다.

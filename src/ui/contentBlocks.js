@@ -305,36 +305,40 @@ export function createCodeBlock(code, language = 'js') {
 }
 
 // ------------------------------------------------------------
-// createAnswerToggle(code, options)
+// createChallengeToggle(options)
 // ------------------------------------------------------------
-// "한 가지 가능한 답안"을 기본적으로 닫아 두는 토글 박스를 만든다.
-// 학생이 먼저 직접 풀어 본 뒤 필요할 때만 열어 보게 하려는 의도다.
+// 챌린지를 기본적으로 접어 두는 토글 블록이다.
+// 문제가 많아질수록 한 번에 다 펼쳐지지 않게 만드는 데 유용하다.
 // ------------------------------------------------------------
-export function createAnswerToggle(code, options = {}) {
+export function createChallengeToggle(options = {}) {
   const {
-    summaryText = '직접 풀어본 뒤 답안 펼치기',
-    hintText = '막혔을 때만 열어 보고, 먼저 스스로 한 번 완성해 보세요.',
-    language = 'js',
+    number = 1,
+    title = '',
+    goal = '',
+    tasks = [],
+    success = [],
+    hint = '',
   } = options;
 
   const details = document.createElement('details');
   const summary = document.createElement('summary');
   const body = document.createElement('div');
 
-  details.className = 'answer-toggle';
-  body.className = 'answer-toggle-body';
-  summary.textContent = summaryText;
+  details.className = 'learning-subsection challenge-toggle';
+  summary.className = 'challenge-toggle-summary';
+  body.className = 'challenge-toggle-body';
+  summary.textContent = `챌린지 ${number}`;
 
-  if (hintText) {
-    const hint = document.createElement('p');
-    hint.className = 'answer-toggle-note';
-    hint.textContent = hintText;
-    body.appendChild(hint);
+  if (title) {
+    body.appendChild(createChallengeTextBlock('문제 초점', title));
   }
 
-  body.appendChild(createCodeBlock(code, language));
-  details.append(summary, body);
+  body.appendChild(createChallengeTextBlock('문제 목표', goal));
+  body.appendChild(createChallengeListBlock('학생이 해야 할 일', tasks));
+  body.appendChild(createChallengeListBlock('성공 기준', success));
+  body.appendChild(createChallengeTextBlock('힌트', hint));
 
+  details.append(summary, body);
   return details;
 }
 
@@ -390,4 +394,33 @@ function appendContent(target, content) {
 
   // 문자열이나 숫자는 글자로 바꿔서 넣는다.
   target.textContent = String(content ?? '');
+}
+
+function createChallengeTextBlock(title, text) {
+  const wrapper = document.createElement('div');
+  const heading = document.createElement('h4');
+  const paragraph = document.createElement('p');
+
+  heading.textContent = title;
+  paragraph.textContent = String(text ?? '');
+  wrapper.append(heading, paragraph);
+
+  return wrapper;
+}
+
+function createChallengeListBlock(title, items = []) {
+  const wrapper = document.createElement('div');
+  const heading = document.createElement('h4');
+  const list = document.createElement('ul');
+
+  heading.textContent = title;
+
+  for (const item of items) {
+    const li = document.createElement('li');
+    li.textContent = item;
+    list.appendChild(li);
+  }
+
+  wrapper.append(heading, list);
+  return wrapper;
 }
