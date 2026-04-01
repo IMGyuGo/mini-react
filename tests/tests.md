@@ -1,115 +1,138 @@
 # Tests Folder Guide
 
-`tests/` 폴더는 지금 두 가지 역할을 함께 합니다.
+`tests/`는 이 프로젝트의 "브라우저 기반 테스트 보드"입니다.
+지금 구조는 전통적인 CLI 테스트 러너라기보다,
+현재 학습 페이지와 mini React 프레임워크가 어디까지 연결되었는지를
+눈으로 확인하는 smoke test + 시나리오 보드에 가깝습니다.
 
-- 브라우저에서 바로 돌려볼 수 있는 최소 smoke test 모음
-- 아직 전부 assertion으로 바꾸지 못한 학습/검증 시나리오 문서
+## 현재 상태 요약
 
-즉, 지금의 `tests/`는 완전한 테스트 러너라기보다
-"현재 어디까지 자동 검증됐는지"와
-"다음에 무엇을 실제 테스트로 바꿔야 하는지"를 함께 보여주는 작업 보드에 가깝습니다.
+현재 시나리오 메타데이터 기준 상태는 아래와 같습니다.
 
-## 폴더 목적
+- `component`: `covered 3`
+- `hooks`: `covered 7`
+- `integration`: `covered 8`
+- `blocked`: `0`
+- `pending`: `0`
 
-- A가 만든 framework 동작이 어디까지 실제로 연결됐는지 빠르게 확인하기
-- C가 설계한 학습 흐름을 테스트 시나리오로 번역해 두기
-- smoke test로 지금 바로 검증 가능한 핵심 연결고리를 브라우저에서 확인하기
-- 아직 막힌 부분은 `blocked`나 `pending` 상태로 남겨 다음 작업 대상을 분명히 하기
+즉, 예전에 blocker였던 event props 연결 문제까지 정리된 뒤에는
+테스트 보드 기준으로 남은 시나리오가 모두 `covered` 상태입니다.
+
+## 이 폴더의 역할
+
+- 브라우저에서 바로 실행 가능한 smoke test를 제공한다.
+- 각 테스트가 무엇을 검증하는지 설명하는 시나리오 메타데이터를 제공한다.
+- 현재 구현 완료도와 남은 발표 준비 단계를 테스트 보드 화면으로 보여준다.
+- 학습 페이지의 핵심 사용자 흐름이 실제로 살아 있는지 빠르게 확인한다.
 
 ## 파일 구성
 
 ### `framework.test.html`
 
-- 브라우저에서 여는 테스트 보드입니다.
-- `component.test.js`, `hooks.test.js`, `integration.test.js`를 ES module로 import 합니다.
-- 위쪽에는 `run...SmokeTests()` 결과를, 아래쪽에는 `run...StubTests()` 시나리오 목록을 렌더링합니다.
-- 중간에는 현재 `blocked` 시나리오만 따로 모아 보여주는 blocker 요약 섹션이 있습니다.
+- 테스트 보드의 진입점이다.
+- 브라우저에서 열면 아래 네 가지를 보여준다.
+- `통합 진행 현황`
+- `실행 가능한 스모크 테스트`
+- `현재 blocker 요약`
+- `component / hooks / integration` 시나리오 목록
+
+이 파일은 각 `.test.js` 모듈에서 두 가지를 import한다.
+
+- `run...SmokeTests()`: 실제 실행 결과
+- `run...StubTests()`: 시나리오 설명과 상태 메타데이터
+
+## 개별 테스트 파일
 
 ### `component.test.js`
 
-- `FunctionComponent`의 가장 기본적인 렌더 흐름을 다룹니다.
-- mount, props update, text node 렌더를 smoke test로 검증합니다.
-- 현재 시나리오는 모두 `covered` 상태입니다.
+- `FunctionComponent`의 가장 기본적인 렌더 흐름을 본다.
+- 현재 smoke test는 아래 흐름을 포함한다.
+- mount 후 DOM 생성
+- props update 반영
+- text node 렌더 확인
 
 ### `hooks.test.js`
 
-- `useState`, `useEffect`, `useMemo` 학습 포인트를 다룹니다.
-- 기본 hook 저장/재실행/deps 비교/memo 재사용은 smoke test로 연결돼 있습니다.
-- 실제 `click`/`input` 상호작용 시나리오도 테스트는 붙어 있지만, 현재 framework의 이벤트 props 연결 빈칸 때문에 `blocked` 상태가 포함됩니다.
+- `useState`, `useEffect`, `useMemo`의 핵심 계약을 본다.
+- 현재 smoke test는 아래 흐름을 포함한다.
+- 여러 `useState` 슬롯 분리
+- `setState` 호출 뒤 DOM 업데이트
+- `useEffect` deps 비교
+- `useMemo` 캐시 재사용
+- `click` 기반 상태 변경
+- `input` 기반 effect 재실행
 
 ### `integration.test.js`
 
-- `render -> state update -> DOM 반영`처럼 기능이 함께 이어지는 흐름을 다룹니다.
-- playground preview 렌더, VDOM 시각화, workshop answer code, 섹션 DOM 구조, reset 흐름까지 smoke test로 확인합니다.
-- workshop preview 내부 버튼 클릭처럼 framework 이벤트 연결에 의존하는 일부 시나리오는 `blocked` 상태입니다.
+- 프레임워크와 학습 페이지가 실제로 함께 동작하는지 본다.
+- 현재 smoke test는 아래 흐름을 포함한다.
+- root component mount
+- `setState -> diff -> patch` 연결
+- playground 실행 뒤 preview 렌더
+- VDOM 시각화 패널 시나리오 전환
+- workshop answer code 실행
+- workshop 스킬 버튼 클릭 후 `selectedSkill` 변경
+- 전체 섹션 DOM 구조 확인
+- playground reset 동작 확인
 
 ### `testUtils.js`
 
-- assertion, sandbox DOM 생성/정리, 공용 smoke test runner, click/input helper를 모아 둔 공용 유틸 파일입니다.
+- 테스트 공용 helper 모음이다.
+- 현재 들어 있는 함수는 아래와 같다.
+- `assert`
+- `assertEqual`
+- `createSandbox`
+- `cleanupSandbox`
+- `triggerClick`
+- `triggerInput`
+- `runTestCases`
 
-## 시나리오 상태 읽는 법
+이 helper 덕분에 각 테스트 파일은 "무엇을 검증할지"에만 집중하고,
+DOM 샌드박스 생성과 결과 포맷팅은 공통 로직으로 재사용한다.
 
-`run...StubTests()`가 돌려주는 시나리오는 아래 상태를 가질 수 있습니다.
+## smoke test와 stub test의 차이
 
-- `covered`
-  이미 smoke test가 연결돼 있는 시나리오입니다.
-- `blocked`
-  smoke test는 만들어졌지만 현재 framework 빈칸 때문에 막혀 있는 시나리오입니다.
-- `pending`
-  아직 문서형 시나리오로만 남아 있고, 실제 assertion으로는 연결되지 않은 항목입니다.
+### `run...SmokeTests()`
 
-`blocked` 상태에는 보통 아래 정보가 같이 붙습니다.
+- 실제 브라우저 DOM 환경에서 assertion을 수행한다.
+- 결과는 `passed` 또는 `failed`다.
+- 테스트 보드 상단 "실행 가능한 스모크 테스트"에 표시된다.
 
-- `coverage`: 어떤 smoke test가 이미 연결돼 있는지
-- `blocker`: 현재 무엇이 막고 있는지
-- `owner`: 다음에 어느 역할이 이어서 보면 좋은지
+### `run...StubTests()`
+
+- 시나리오 설명, 이유, setup, checkpoints, coverage를 보드용 형식으로 돌려준다.
+- 결과는 `covered`, `blocked`, `pending` 같은 시나리오 상태다.
+- 현재는 모든 시나리오가 `covered`지만,
+  이 함수는 여전히 "무엇을 왜 검증하는지"를 설명하는 보드 데이터로 중요하다.
 
 ## 브라우저에서 보는 방법
 
 가장 쉬운 시작점은 `tests/framework.test.html`입니다.
 
-페이지를 열면 아래 순서로 읽으면 됩니다.
+1. 파일을 브라우저에서 연다.
+2. 상단 `테스트 다시 실행` 버튼을 누른다.
+3. `passed / failed` 스모크 테스트 결과를 먼저 본다.
+4. 아래 시나리오 카드에서 각 테스트의 이유와 검증 포인트를 읽는다.
 
-1. 상단 `통합 진행 현황`
-   지금 Phase 기준으로 어디까지 왔는지 봅니다.
-2. `실행 가능한 스모크 테스트`
-   실제 브라우저 환경에서 바로 돌아가는 최소 assertion 결과를 봅니다.
-3. `현재 blocker 요약`
-   framework 빈칸 때문에 막힌 시나리오만 빠르게 확인합니다.
-4. `컴포넌트 / Hook / 통합 테스트`
-   아직 남아 있는 시나리오를 `covered`, `blocked`, `pending` 상태와 함께 읽습니다.
+## 지금 보드가 보여주는 의미
 
-## 코드에서 직접 쓰는 함수
+현재 보드에서 `covered`는 "시나리오가 이미 smoke test와 연결되어 있다"는 뜻입니다.
+예전에는 hooks/workshop 상호작용이 `blocked`로 남아 있었지만,
+현재는 DOM event props 연결 이후 covered로 정리되었습니다.
 
-각 `.test.js` 파일은 공통적으로 아래 함수를 제공합니다.
+즉 지금 테스트 보드는
+"무엇이 아직 미구현인가?"보다는
+"현재 발표용으로 어떤 핵심 흐름이 살아 있는가?"를 확인하는 도구에 더 가깝습니다.
 
-- `get...Scenarios()`
-  시나리오 목록을 메타정보와 함께 가져옵니다.
-- `run...SmokeTests()`
-  브라우저에서 바로 실행 가능한 최소 assertion 결과를 돌려줍니다.
-- `run...StubTests()`
-  시나리오 목록을 테스트 보드가 읽기 좋은 형태로 돌려줍니다.
+## 현재 한계
 
-## `framework.test.html` 동작 과정
+- 아직 npm 기반 CLI 테스트 러너는 붙어 있지 않다.
+- 테스트는 브라우저 환경과 DOM 샌드박스를 전제로 한다.
+- smoke test는 핵심 흐름 위주라서 모든 edge case를 완전히 다루지는 않는다.
 
-1. HTML 안의 `<script type="module">`이 각 `.test.js` 파일을 import 합니다.
-2. `run...SmokeTests()`가 실행돼 `passed` / `failed` 결과를 만듭니다.
-3. `run...StubTests()`가 시나리오 목록과 `covered` / `blocked` / `pending` 메타정보를 돌려줍니다.
-4. `renderAll()`이 위 결과를 `#progress`, `#smoke-results`, `#results`에 나눠서 렌더링합니다.
-5. `테스트 다시 실행` 버튼을 누르면 같은 과정을 다시 수행합니다.
+## 추천 확인 순서
 
-## 현재 해석 포인트
-
-- `passed`: 현재 연결된 smoke test가 통과한 상태
-- `failed`: smoke test가 실제로 실패한 상태
-- `blocked`: 시나리오 자체는 중요하고 테스트도 붙었지만, 아직 framework 기능이 부족해서 막힌 상태
-
-특히 최근 추가된 상호작용 smoke test는 `click`과 `input`까지 보므로,
-여기서 실패가 난다면 학습 콘텐츠 문제라기보다
-`onclick`, `oninput` 같은 이벤트 props가 실제 DOM listener로 연결되지 않는 framework 빈칸일 가능성이 큽니다.
-
-## 다음 확장 방향
-
-- `blocked` 시나리오가 A 작업 이후 실제 통과로 바뀌는지 확인하기
-- `pending` 시나리오를 하나씩 smoke test 또는 더 촘촘한 assertion으로 전환하기
-- 최종적으로는 문서형 시나리오 비중을 줄이고, 실행형 테스트 비중을 늘리기
+- 프레임워크 기본이 궁금하면 `component.test.js`
+- hooks 동작이 궁금하면 `hooks.test.js`
+- 학습 페이지 전체 연결 상태가 궁금하면 `integration.test.js`
+- 현재 완료도를 한 화면에서 보고 싶다면 `framework.test.html`
