@@ -71,6 +71,40 @@ const COMPONENT_CHALLENGE = {
 // starter code는 이제 실제 playground에서 바로 실행할 수 있는 형태다.
 // 맨 아래의 return App;은 codePlayground가 루트 컴포넌트를 받아
 // 바로 프리뷰를 그릴 수 있게 해 주는 마무리 줄이다.
+const COMPONENT_CHALLENGES = [
+  COMPONENT_CHALLENGE,
+  {
+    title: '컴포넌트 테스트 2: props만 바꿔 소개 문장 달라지게 만들기',
+    goal: '카드 모양은 그대로 두고, props에 따라 카드 안 소개 문장이 달라지도록 만들어 보세요.',
+    tasks: [
+      'ProfileCard에 intro 또는 badge 같은 새 props를 추가한다.',
+      '카드 안에 새 props를 출력하는 문장을 한 줄 더 넣는다.',
+      '서로 다른 props를 넘겨 카드마다 다른 소개 문장이 보이게 만든다.',
+    ],
+    success: [
+      '카드 구조는 그대로인데 출력 문장만 props에 따라 달라진다.',
+      '같은 컴포넌트를 재사용하면서 내용만 바뀌는 흐름이 발표에서 분명하게 보인다.',
+      'props가 UI 내용을 채우는 역할이라는 점을 코드로 바로 설명할 수 있다.',
+    ],
+    hint: '모양을 바꾸기보다 props 한두 개를 더 받아서 텍스트만 달라지게 만드는 쪽이 핵심입니다.',
+  },
+  {
+    title: '컴포넌트 테스트 3: 부모가 카드 목록을 조립하는지 보여주기',
+    goal: 'App이 카드 목록 전체를 조립하고, ProfileCard는 카드 한 장만 책임지도록 역할을 나눠 보세요.',
+    tasks: [
+      'App 안에 섹션 제목이나 안내 문장을 추가한다.',
+      '그 아래에 ProfileCard를 두세 개 배치해서 목록처럼 보이게 만든다.',
+      'ProfileCard 안에는 카드 한 장에 필요한 마크업만 남겨 둔다.',
+    ],
+    success: [
+      '부모 App은 화면 구성, 자식 ProfileCard는 카드 한 장 표현이라는 역할 분리가 보인다.',
+      '카드 수를 늘려도 ProfileCard 코드를 크게 바꾸지 않는다.',
+      '부모가 조립하고 자식이 표현한다는 설명 포인트가 선명해진다.',
+    ],
+    hint: 'App은 전체 레이아웃을 조립하고, ProfileCard는 카드 한 장만 그린다고 생각하면 정리하기 쉽습니다.',
+  },
+];
+
 export const COMPONENT_PRACTICE = {
   starterCode: `function ProfileCard(props) {
   return h('article', { class: 'profile-card' },
@@ -159,7 +193,9 @@ export function createComponentSection() {
     initialCode: COMPONENT_PRACTICE.starterCode,
   }));
   section.appendChild(createAnswerCard('한 가지 가능한 답안', COMPONENT_PRACTICE.answerCode));
-  section.appendChild(createChallengeCard(COMPONENT_CHALLENGE));
+  for (const challenge of COMPONENT_CHALLENGES) {
+    section.appendChild(createChallengeCard(challenge));
+  }
 
   return section;
 }

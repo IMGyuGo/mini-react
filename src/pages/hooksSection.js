@@ -243,6 +243,54 @@ return App;`,
   },
 ];
 
+const HOOK_TEST_CHALLENGES = [
+  {
+    title: '훅 테스트 1: useState가 값을 기억하는지 확인하기',
+    goal: '하나의 count state가 여러 UI 조각에 동시에 반영되면서도, 다시 렌더링돼도 값이 유지되는지 보여 주세요.',
+    tasks: [
+      'count를 보여 주는 문장을 두 곳 이상 만든다.',
+      'count를 2배로 계산한 값이나 짝수/홀수 문장도 함께 출력한다.',
+      '증가 버튼과 초기화 버튼을 추가해서 같은 state를 여러 방식으로 바꿔 본다.',
+    ],
+    success: [
+      '한 state 변화가 여러 문장에 동시에 반영된다.',
+      '버튼을 여러 번 눌러도 값이 초기화되지 않고 계속 기억된다.',
+      'state는 기억하고, 렌더링은 다시 실행된다는 설명을 발표에서 할 수 있다.',
+    ],
+    hint: '새 state를 여러 개 만들기보다 count 하나를 여러 출력에 연결하는 구성이 더 핵심을 잘 보여 줍니다.',
+  },
+  {
+    title: '훅 테스트 2: useEffect 실행 타이밍 확인하기',
+    goal: 'name이 바뀔 때만 effect가 다시 실행되고, 다른 state 변경에는 반응하지 않는 장면을 보여 주세요.',
+    tasks: [
+      'name과 track처럼 서로 다른 state 두 개를 준비한다.',
+      'effect는 name만 의존하도록 deps를 구성한다.',
+      '두 입력을 각각 바꿔 보며 어떤 경우에만 effect 로그가 바뀌는지 확인한다.',
+    ],
+    success: [
+      'track만 바꿀 때는 effect 로그가 그대로 유지된다.',
+      'name을 바꿀 때만 effect 로그가 다시 계산된다.',
+      '렌더링과 effect 실행 조건이 다르다는 점을 발표에서 분리해서 설명할 수 있다.',
+    ],
+    hint: '핵심은 state를 두 개 두고, effect가 어떤 값만 바라보는지 차이를 눈으로 보이게 만드는 것입니다.',
+  },
+  {
+    title: '훅 테스트 3: useMemo 재계산 조건 확인하기',
+    goal: '화면은 다시 렌더링돼도, memo 계산은 의존한 값이 바뀔 때만 다시 실행되는지 확인해 보세요.',
+    tasks: [
+      'tab처럼 화면만 바꾸는 state와 scores처럼 계산에 쓰는 state를 함께 둔다.',
+      '총점 또는 최고점 계산 횟수를 화면에 출력한다.',
+      'tab만 바꿀 때와 scores를 바꿀 때 계산 횟수가 어떻게 달라지는지 비교한다.',
+    ],
+    success: [
+      'tab만 바꿀 때는 계산 횟수가 늘어나지 않는다.',
+      'scores가 바뀔 때만 계산 횟수가 증가한다.',
+      '재렌더와 재계산은 다르다는 포인트를 발표에서 명확히 보여 줄 수 있다.',
+    ],
+    hint: 'memo가 바라보는 값과, 화면을 다시 그리게만 하는 값을 일부러 나눠 두면 차이가 잘 드러납니다.',
+  },
+];
+
 // ------------------------------------------------------------
 // createHooksSection()
 // ------------------------------------------------------------
@@ -290,6 +338,10 @@ export function createHooksSection() {
       '먼저 실행 버튼으로 초기 화면을 확인하고, 그다음 입력값이나 버튼을 하나씩 바꾸며 어떤 Hook이 언제 다시 동작하는지 순서대로 관찰해 보세요.',
     ),
   );
+
+  for (const challenge of HOOK_TEST_CHALLENGES) {
+    section.appendChild(createChallengeCard(challenge));
+  }
 
   return section;
 }
@@ -371,6 +423,25 @@ function createHookLessonCard({
 
 // 작은 제목(h4) + 본문(p) 조합을 만드는 세부 helper다.
 // 큰 카드 안에서 소제목을 나눌 때 사용한다.
+function createChallengeCard({ title, goal, tasks, success, hint }) {
+  const article = createCardShell(title);
+
+  /*
+
+  article.appendChild(createDetailParagraph('臾몄젣 紐⑺몴', goal));
+  article.appendChild(createDetailList('?숈깮???댁빞 ????, tasks));
+  article.appendChild(createDetailList('?깃났 湲곗?', success));
+  article.appendChild(createDetailParagraph('?뚰듃', hint));
+
+  */
+  article.appendChild(createDetailParagraph('Goal', goal));
+  article.appendChild(createDetailList('Checkpoints', tasks));
+  article.appendChild(createDetailList('Success Criteria', success));
+  article.appendChild(createDetailParagraph('Hint', hint));
+
+  return article;
+}
+
 function createDetailParagraph(title, text) {
   const wrapper = document.createElement('div');
   const heading = document.createElement('h4');

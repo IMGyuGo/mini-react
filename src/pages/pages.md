@@ -1,75 +1,115 @@
 # Pages Folder Guide
 
-`src/pages/` 폴더는 학습 페이지의 "콘텐츠 조각"을 담당합니다.  
-각 파일은 섹션 하나를 만들고, `app.js`는 그 섹션들을 순서대로 모아 화면에 붙입니다.
+`src/pages/`는 학습 페이지의 "본문 원본"을 모아 두는 폴더입니다.
+각 파일은 특정 챕터의 설명, 예제 코드, 챌린지, 실습 데이터를 만들고,
+실제 화면 배치와 챕터 전환은 `src/app.js`가 담당합니다.
 
-## 이 폴더의 역할
+## 이 폴더의 현재 역할
 
-- 학습 주제별 설명 문장을 준비합니다.
-- 예제 코드, 체크리스트, STUB 자리, playground 카드 같은 학습 카드 구조를 만듭니다.
-- 실제 렌더링 로직보다는 "학생이 어떤 순서로 읽고 실습할지"를 결정합니다.
+- 챕터별 설명 카드와 코드 예시를 만든다.
+- 챕터별 실습 starter code와 answer code를 export한다.
+- VDOM 시각화처럼 챕터 전용 학습 도구를 만든다.
+- 학습 흐름을 `설명 -> 예제 -> 직접 해보기 -> 챌린지` 기준으로 정리한다.
 
-## 화면에 붙는 순서
+## 실제 화면과 연결되는 방식
 
-1. `src/app.js`가 각 `create*Section()` 함수를 import 합니다.
-2. 각 함수는 자기 섹션에 해당하는 `<section>` DOM 묶음을 만듭니다.
-3. `src/ui/layout.js`가 준비한 콘텐츠 영역에 이 섹션들이 순서대로 붙습니다.
-4. 사용자는 왼쪽 내비게이션과 오른쪽 섹션 본문을 통해 학습 흐름을 따라갑니다.
+현재 구조는 "pages가 본문 원본을 만들고, app이 최종 화면에 맞게 정리하는 방식"입니다.
 
-## 공통 패턴
+1. 각 파일이 `create...Section()` 함수를 export한다.
+2. 필요하면 `...PRACTICE` 형태의 실습 데이터도 같이 export한다.
+3. `src/app.js`가 이 함수들과 실습 데이터를 import한다.
+4. `buildSections()`가 각 챕터 DOM을 만든다.
+5. `normalizeSectionElement()`가 stage에 중복되는 소개 블록과 inline playground를 정리한다.
+6. `renderPracticeRail()`이 오른쪽 `practice rail`에 실행 가능한 playground를 붙인다.
 
-모든 페이지 파일은 비슷한 구조를 가집니다.
+즉, 현재 최종 화면은 이렇게 나뉩니다.
 
-- 파일 상단에 학습 데이터 배열 또는 예제 코드 문자열을 둡니다.
-- `create...Section()` 공개 함수 하나가 전체 섹션 DOM을 만듭니다.
-- 아래쪽 helper 함수들이 제목 블록, 설명 카드, 코드 카드, playground 카드, placeholder 카드를 재사용합니다.
+- 가운데 stage: 설명, 예제 코드, 체크포인트, 챌린지, VDOM 시각화
+- 오른쪽 practice rail: 실제로 실행되는 playground
 
-공통 playground 카드는 `practicePlayground.js`가 맡고 있습니다.
-이 helper는 `codePlayground.js`를 감싸서, 각 섹션 파일이 starter code와 설명만 넘기면 바로 실습 카드를 만들 수 있게 도와줍니다.
+이 구조 때문에 섹션 파일 안에 playground 카드 helper가 있어도,
+최종 통합 화면에서는 `app.js`가 practice rail 중심으로 재배치합니다.
 
-이 패턴을 유지하면 나중에 새로운 섹션을 추가해도 읽는 방식이 크게 달라지지 않습니다.
-
-## 파일별 설명
+## 현재 파일 구성
 
 ### `componentSection.js`
 
-- 첫 섹션인 `Component와 Props`를 만듭니다.
-- 학생이 "컴포넌트는 UI 조각", "props는 부모가 자식에게 주는 값"이라는 감각을 잡도록 설계되어 있습니다.
-- starter code가 실제 playground에 연결되어 있어서, 같은 컴포넌트를 props만 바꿔 재사용하는 연습을 바로 해볼 수 있습니다.
+- `Component + Props` 챕터를 만든다.
+- `COMPONENT_PRACTICE`를 export해서 오른쪽 rail에서 실습할 starter code를 제공한다.
+- 카드 재사용과 props 변경을 가장 먼저 체험하게 하는 입문 챕터다.
 
 ### `hooksSection.js`
 
-- `useState`, `useEffect`, `useMemo`를 다룹니다.
-- 각 Hook 카드가 `설명 -> playground -> 직접 해보기 -> 답안 예시 -> 챌린지` 흐름으로 구성되어 있습니다.
-- `useEffect`는 effect 문구를, `useMemo`는 계산 횟수를 화면에서 바로 확인할 수 있게 설계되어 있습니다.
+- `useState`, `useEffect`, `useMemo` 챕터를 만든다.
+- `HOOK_PRACTICES` 배열을 export한다.
+- Hook마다 설명, starter code, answer code, 챌린지를 따로 갖고 있어서
+  rail에서는 탭처럼 여러 실습을 전환해 보여줄 수 있다.
 
 ### `stateSection.js`
 
-- `Lifting State Up` 개념을 설명합니다.
-- 여러 컴포넌트가 같은 데이터를 쓸 때 왜 부모로 state를 올리는지 문장과 예제로 보여 줍니다.
-- starter code가 실제 playground에 연결되어 있어, 입력창은 바뀌지만 결과 카드는 안 바뀌는 출발점에서 부모 state 공유 구조로 직접 고쳐 볼 수 있습니다.
+- `Lifting State Up` 챕터를 만든다.
+- `STATE_PRACTICE`를 export한다.
+- 부모가 state를 소유하고 자식은 props를 받는 구조를 설명하는 데 집중한다.
 
 ### `vdomSection.js`
 
-- `setState -> re-render -> diff -> patch` 흐름을 소개합니다.
-- 이전/다음 트리 예시와 patch 예측용 starter/answer를 보여 주고, 실제 `diffVisualizer.js`를 붙여 old/new tree와 patch 목록을 같이 볼 수 있게 구성했습니다.
-- 시나리오 버튼으로 `텍스트 변경 + 노드 추가`, `속성 변경 + 노드 제거`를 번갈아 확인할 수 있습니다.
+- `Virtual DOM` 챕터를 만든다.
+- `VDOM_PRACTICE`를 export한다.
+- `createDiffVisualizer()`를 이용해 old tree / new tree / patch list를 같이 보여준다.
+- 현재는 자유 입력형 playground보다 "미리 준비된 시나리오를 버튼으로 바꿔 보는 학습형 시각화"에 가깝다.
 
 ### `workshopSection.js`
 
-- 마지막 종합 실습 섹션입니다.
-- 학생이 어떤 부품을 만들고 어떤 모양의 App을 완성해야 하는지 목표를 분명히 보여 줍니다.
-- starter code가 실제 playground에 연결되어 있어, 정적인 카드 앱에서 시작해 `selectedSkill` state와 클릭 이벤트까지 확장해 볼 수 있습니다.
+- 마지막 종합 실습 챕터를 만든다.
+- `WORKSHOP_PRACTICE`를 export한다.
+- `Header`, `ProfileCard`, `SkillList`, `selectedSkill` state를 합쳐
+  작은 앱을 조립하는 흐름으로 설계되어 있다.
 
-## 확장할 때 지키면 좋은 규칙
+### `practicePlayground.js`
 
-- 새로운 섹션도 `create...Section()` 공개 함수 하나로 끝내기
-- 설명, 예제, 직접 해보기, 챌린지 순서를 되도록 유지하기
-- 아직 미구현인 기능은 `[STUB]` 문구로 의도를 분명히 남기기
-- 학습용 코드이므로 예제는 짧고 읽기 쉽게 유지하기
+- 섹션 안에 inline playground 카드를 붙일 때 쓰는 공용 helper다.
+- 내부적으로 `src/ui/codePlayground.js`의 `createPlayground()`를 감싸고,
+  생성 직후 `run()`까지 호출해 초기 미리보기가 바로 보이게 한다.
+- 현재 최종 통합 화면은 오른쪽 practice rail이 중심이지만,
+  섹션 단독 렌더나 문서화된 예제에서는 여전히 유용한 helper다.
 
-## 지금 읽는 방법
+## 챕터별 실습 데이터 export
 
-- "현재 학습 흐름이 어떻게 짜였는지" 보려면 `componentSection.js`부터 순서대로 읽는 것이 좋습니다.
-- "가장 완성도가 높은 섹션 예시"를 보려면 `hooksSection.js`를 먼저 읽어도 좋습니다.
-- "아직 어떤 기능이 남았는지" 보려면 각 챌린지 카드와 테스트 시나리오를 함께 보면 됩니다.
+현재 `src/pages/`에서 외부로 노출하는 실습 데이터는 아래와 같습니다.
+
+- `COMPONENT_PRACTICE`
+- `HOOK_PRACTICES`
+- `STATE_PRACTICE`
+- `VDOM_PRACTICE`
+- `WORKSHOP_PRACTICE`
+
+`src/app.js`는 이 데이터를 직접 읽어서 practice rail의 `createPlayground()` 옵션으로 변환합니다.
+
+## app.js가 추가로 담당하는 일
+
+현재 `src/pages/` 문서를 볼 때 놓치기 쉬운 점은,
+최종 화면 구조의 일부가 이미 `src/app.js`로 올라가 있다는 점입니다.
+
+- 챕터 제목과 요약은 stage 상단 chapter shell에서 따로 보여준다.
+- practice rail의 playground는 `SECTION_FACTORIES.practice` 설정으로 만든다.
+- VDOM rail 예제와 state rail 예제 중 일부는 `app.js` 안에서 별도 코드 문자열로 관리한다.
+- `decorateSubsectionHeadings()`가 챕터별 카드 제목에 아이콘을 붙여 최종 표현을 다듬는다.
+
+즉, pages 파일만 보면 "섹션이 전부 스스로 완결된 것처럼" 보일 수 있지만,
+실제 사용자 화면은 `src/app.js`와 합쳐져서 완성됩니다.
+
+## 새 챕터를 추가할 때 규칙
+
+새 파일을 추가할 때는 아래 순서를 따르면 현재 구조와 잘 맞습니다.
+
+1. `createNewSection()` 형태의 공개 함수를 만든다.
+2. 필요한 starter code / answer code를 `...PRACTICE` 데이터로 분리한다.
+3. stage에서 읽을 설명 카드와 challenge 카드를 먼저 만든다.
+4. 실제 실행이 필요하면 `src/app.js`의 `SECTION_FACTORIES`에 `practice` 설정을 추가한다.
+5. stage에 임시로 inline playground를 넣었더라도, 최종 통합에서는 practice rail 중복 여부를 확인한다.
+
+## 지금 이 폴더를 읽는 추천 순서
+
+- 전체 구조를 먼저 보고 싶다면 `componentSection.js -> hooksSection.js -> stateSection.js -> vdomSection.js -> workshopSection.js`
+- practice rail과의 연결까지 이해하고 싶다면 `src/app.js`를 바로 같이 읽기
+- VDOM 시각화 동작을 알고 싶다면 `vdomSection.js` 다음에 `src/ui/diffVisualizer.js` 읽기
