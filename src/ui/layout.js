@@ -15,30 +15,89 @@
 // [왼쪽]
 //   - 챕터 네비게이션
 //
-// [오른쪽]
-//   - 현재 챕터 제목 카드
-//   - 이전/다음 버튼
+// [가운데]
+//   - 현재 챕터 제목
 //   - 실제 챕터 내용 1개
+//
+// [오른쪽]
+//   - 직접 해보기 playground
+//   - 라이브 프리뷰
 // ------------------------------------------------------------
 export function createLayout(root) {
   // root는 index.html의 가장 큰 빈 상자다.
   // 이 안을 우리 학습 페이지 구조로 통째로 채운다.
+  const heroLinks = [
+    {
+      label: 'Components',
+      href: 'https://ko.react.dev/learn/importing-and-exporting-components',
+    },
+    {
+      label: 'Props',
+      href: 'https://ko.react.dev/learn/passing-props-to-a-component',
+    },
+    {
+      label: 'State',
+      href: 'https://ko.react.dev/learn/state-a-components-memory',
+    },
+    {
+      label: 'Effects',
+      href: 'https://ko.react.dev/learn/synchronizing-with-effects',
+    },
+  ];
+
+  // hero pill은 이제 단순 장식이 아니라
+  // React 공식 문서로 가는 빠른 학습 링크 역할도 한다.
+  const heroPillsMarkup = heroLinks
+    .map((link) => {
+      return `
+        <a
+          class="hero-pill"
+          href="${link.href}"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ${link.label}
+        </a>
+      `;
+    })
+    .join('');
+
   root.innerHTML = `
     <main class="nexus-shell learning-shell">
       <header class="hero learning-hero">
         <div class="hero-copy">
-          <p class="eyebrow">Mini React Learning Page</p>
-          <h1>React 핵심 개념 학습 페이지</h1>
-          <p class="hero-description">
-            Component, Props, State, Hooks, Virtual DOM을
-            직접 보고 만지면서 배우는 학습용 서비스입니다.
-          </p>
+          <p class="eyebrow">React Learning</p>
+          <div class="hero-title-row">
+            <svg
+              class="react-mark react-mark-inline"
+              viewBox="0 0 256 256"
+              role="img"
+              aria-label="React logo"
+            >
+              <circle class="react-mark-core" cx="128" cy="128" r="18"></circle>
+              <ellipse class="react-mark-orbit" cx="128" cy="128" rx="92" ry="36"></ellipse>
+              <ellipse
+                class="react-mark-orbit"
+                cx="128"
+                cy="128"
+                rx="92"
+                ry="36"
+                transform="rotate(60 128 128)"
+              ></ellipse>
+              <ellipse
+                class="react-mark-orbit"
+                cx="128"
+                cy="128"
+                rx="92"
+                ry="36"
+                transform="rotate(120 128 128)"
+              ></ellipse>
+            </svg>
+            <h1>What is React?</h1>
+          </div>
 
-          <div class="hero-pills" aria-label="핵심 학습 키워드">
-            <span class="hero-pill">Pure JavaScript</span>
-            <span class="hero-pill">Mini React</span>
-            <span class="hero-pill">Interactive Learning</span>
-            <span class="hero-pill">Chapter Navigation</span>
+          <div class="hero-pills" aria-label="React 공식 학습 링크">
+            ${heroPillsMarkup}
           </div>
         </div>
       </header>
@@ -47,10 +106,6 @@ export function createLayout(root) {
         <aside class="panel-card learning-sidebar">
           <p class="sidebar-label">Roadmap</p>
           <h2>학습 순서</h2>
-          <p class="sidebar-copy">
-            지금은 한 번에 한 챕터씩 집중해서 보는 방식입니다.
-            왼쪽 메뉴를 누르면 해당 챕터로 화면이 바뀝니다.
-          </p>
           <nav id="learning-nav" aria-label="학습 섹션 목록"></nav>
         </aside>
 
@@ -63,15 +118,14 @@ export function createLayout(root) {
                 챕터 설명을 준비 중입니다.
               </p>
             </div>
-
-            <div class="chapter-actions" aria-label="챕터 이동 버튼">
-              <button id="chapter-prev" type="button">이전 챕터</button>
-              <button id="chapter-next" type="button">다음 챕터</button>
-            </div>
           </header>
 
           <section id="learning-content" class="learning-content" aria-live="polite"></section>
         </section>
+
+        <aside class="learning-practice-rail" aria-label="실습 영역">
+          <div id="practice-rail-slot" class="practice-rail-slot"></div>
+        </aside>
       </section>
     </main>
   `;
@@ -91,10 +145,8 @@ export function createLayout(root) {
     chapterTitle: root.querySelector('#chapter-title'),
     // 현재 챕터 한 줄 설명이다.
     chapterSummary: root.querySelector('#chapter-summary'),
-    // 이전 챕터 버튼이다.
-    prevButton: root.querySelector('#chapter-prev'),
-    // 다음 챕터 버튼이다.
-    nextButton: root.querySelector('#chapter-next'),
+    // 오른쪽 실습 rail에 playground를 꽂을 자리다.
+    practiceSlot: root.querySelector('#practice-rail-slot'),
   };
 }
 
