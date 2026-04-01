@@ -64,6 +64,40 @@ const STATE_CHALLENGE = {
 
 // state 올리기 전/후 코드를 한 쌍으로 준비해 두면
 // playground에서 "무엇을 바꿔야 하는가"가 훨씬 분명해진다.
+const STATE_CHALLENGES = [
+  STATE_CHALLENGE,
+  {
+    title: 'State 테스트 2: 입력창 두 개를 완전히 동기화하기',
+    goal: 'TemperatureInput을 두 개 렌더해도 두 입력창과 결과 카드가 항상 같은 temperature state를 보도록 만들어 보세요.',
+    tasks: [
+      'App에 TemperatureInput을 하나 더 추가한다.',
+      '두 입력창 모두 같은 value와 onChange props를 받게 연결한다.',
+      '한쪽 입력창만 수정해도 다른 입력창과 ResultCard가 함께 바뀌는지 확인한다.',
+    ],
+    success: [
+      '두 입력창이 서로 다른 local state를 가지지 않고 같은 값을 공유한다.',
+      '한 입력창에서 바꾼 값이 다른 입력창과 결과 카드에 즉시 반영된다.',
+      'state를 부모가 들고 있어야 하는 이유를 발표에서 분명하게 보여 줄 수 있다.',
+    ],
+    hint: '입력창이 두 개라도 state는 하나만 두고, 두 자식 모두 같은 props를 받게 연결하면 됩니다.',
+  },
+  {
+    title: 'State 테스트 3: Reset 버튼도 같은 state를 바꾸게 만들기',
+    goal: '별도의 ResetButton 자식 컴포넌트를 추가해서 입력창과 결과 카드가 함께 초기화되도록 만들어 보세요.',
+    tasks: [
+      'ResetButton 컴포넌트를 만들고 onReset props를 받게 한다.',
+      'App에서 setTemperature를 활용해 초기값으로 되돌리는 함수를 만든다.',
+      '버튼을 누르면 입력창 값과 ResultCard 값이 동시에 초기화되는지 확인한다.',
+    ],
+    success: [
+      'ResetButton이 직접 state를 가지지 않고 부모가 내려준 함수만 호출한다.',
+      '한 번의 클릭으로 여러 자식 UI가 같은 값으로 함께 바뀐다.',
+      '부모 state 하나가 여러 자식을 동시에 제어하는 장면을 발표에서 보여 줄 수 있다.',
+    ],
+    hint: '버튼이 값을 직접 들고 있을 필요는 없습니다. 부모가 가진 setter를 함수로 내려주는 쪽이 더 자연스럽습니다.',
+  },
+];
+
 export const STATE_PRACTICE = {
   starterCode: `function TemperatureInput(props) {
   const [value, setValue] = useState('');
@@ -146,7 +180,9 @@ export function createStateSection() {
     initialCode: STATE_PRACTICE.starterCode,
   }));
   section.appendChild(createCodeCard('한 가지 가능한 답안', STATE_PRACTICE.answerCode));
-  section.appendChild(createChallengeCard(STATE_CHALLENGE));
+  for (const challenge of STATE_CHALLENGES) {
+    section.appendChild(createChallengeCard(challenge));
+  }
 
   return section;
 }
