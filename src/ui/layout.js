@@ -15,14 +15,53 @@
 // [왼쪽]
 //   - 챕터 네비게이션
 //
-// [오른쪽]
-//   - 현재 챕터 제목 카드
-//   - 이전/다음 버튼
+// [가운데]
+//   - 현재 챕터 제목
 //   - 실제 챕터 내용 1개
+//
+// [오른쪽]
+//   - 직접 해보기 playground
+//   - 라이브 프리뷰
 // ------------------------------------------------------------
 export function createLayout(root) {
   // root는 index.html의 가장 큰 빈 상자다.
   // 이 안을 우리 학습 페이지 구조로 통째로 채운다.
+  const heroLinks = [
+    {
+      label: 'Components',
+      href: 'https://ko.react.dev/learn/importing-and-exporting-components',
+    },
+    {
+      label: 'Props',
+      href: 'https://ko.react.dev/learn/passing-props-to-a-component',
+    },
+    {
+      label: 'State',
+      href: 'https://ko.react.dev/learn/state-a-components-memory',
+    },
+    {
+      label: 'Effects',
+      href: 'https://ko.react.dev/learn/synchronizing-with-effects',
+    },
+  ];
+
+  // hero pill은 이제 단순 장식이 아니라
+  // React 공식 문서로 가는 빠른 학습 링크 역할도 한다.
+  const heroPillsMarkup = heroLinks
+    .map((link) => {
+      return `
+        <a
+          class="hero-pill"
+          href="${link.href}"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ${link.label}
+        </a>
+      `;
+    })
+    .join('');
+
   root.innerHTML = `
     <main class="nexus-shell learning-shell">
       <header class="hero learning-hero">
@@ -57,11 +96,8 @@ export function createLayout(root) {
             <h1>What is React?</h1>
           </div>
 
-          <div class="hero-pills" aria-label="핵심 학습 키워드">
-            <span class="hero-pill">Declarative UI</span>
-            <span class="hero-pill">Component-Based</span>
-            <span class="hero-pill">Interactive Learning</span>
-            <span class="hero-pill">Mini React</span>
+          <div class="hero-pills" aria-label="React 공식 학습 링크">
+            ${heroPillsMarkup}
           </div>
         </div>
       </header>
@@ -82,15 +118,14 @@ export function createLayout(root) {
                 챕터 설명을 준비 중입니다.
               </p>
             </div>
-
-            <div class="chapter-actions" aria-label="챕터 이동 버튼">
-              <button id="chapter-prev" type="button">이전 챕터</button>
-              <button id="chapter-next" type="button">다음 챕터</button>
-            </div>
           </header>
 
           <section id="learning-content" class="learning-content" aria-live="polite"></section>
         </section>
+
+        <aside class="learning-practice-rail" aria-label="실습 영역">
+          <div id="practice-rail-slot" class="practice-rail-slot"></div>
+        </aside>
       </section>
     </main>
   `;
@@ -110,10 +145,8 @@ export function createLayout(root) {
     chapterTitle: root.querySelector('#chapter-title'),
     // 현재 챕터 한 줄 설명이다.
     chapterSummary: root.querySelector('#chapter-summary'),
-    // 이전 챕터 버튼이다.
-    prevButton: root.querySelector('#chapter-prev'),
-    // 다음 챕터 버튼이다.
-    nextButton: root.querySelector('#chapter-next'),
+    // 오른쪽 실습 rail에 playground를 꽂을 자리다.
+    practiceSlot: root.querySelector('#practice-rail-slot'),
   };
 }
 

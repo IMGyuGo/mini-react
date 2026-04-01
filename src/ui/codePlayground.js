@@ -38,6 +38,8 @@ export function createPlayground(options = {}) {
     readOnly = false,
     // VDOM 보기 칸을 함께 보여 줄지 여부다.
     showVdom = false,
+    // 에디터 위, 프리뷰 아래로 세로 배치할지 여부다.
+    stacked = false,
     // 실행 전에 바깥에서 별도 처리를 하고 싶을 때 쓰는 훅이다.
     onRun = null,
   } = options;
@@ -46,6 +48,11 @@ export function createPlayground(options = {}) {
   const element = document.createElement('section');
   // CSS에서 2열 playground처럼 꾸미기 위한 클래스다.
   element.className = 'playground';
+
+  // 오른쪽 rail처럼 좁은 공간에서는 세로 배치가 더 읽기 쉽다.
+  if (stacked) {
+    element.classList.add('playground-stacked');
+  }
 
   // 왼쪽 에디터 칸을 만든다.
   const editorPanel = document.createElement('div');

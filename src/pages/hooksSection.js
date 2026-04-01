@@ -15,8 +15,9 @@ import { createPracticePlaygroundCard } from './practicePlayground.js';
 // "지금 뭘 확인해야 하는지"를 잡기 쉽다.
 const SECTION_GOALS = [
   '함수형 컴포넌트가 다시 실행돼도 값이 어떻게 유지되는지 이해한다.',
-  'useState, useEffect, useMemo가 각각 언제 필요한지 구분한다.',
-  'playground에서 어떤 값을 바꿔 보면 좋은지 미리 익힌다.',
+  'useState, useEffect, useMemo가 각각 어떤 문제를 해결하기 위해 등장했는지 구분한다.',
+  '같은 컴포넌트 안에서도 "값 기억하기", "렌더링 뒤 실행하기", "계산 아끼기"가 서로 다른 역할이라는 점을 익힌다.',
+  'playground에서 어떤 값을 바꿔 보면 Hook의 차이가 잘 드러나는지 미리 익힌다.',
 ];
 
 // Hook은 문법보다 "호출 규칙"을 먼저 놓치기 쉽다.
@@ -27,6 +28,9 @@ const HOOK_RULES = [
   'state를 바꿀 때는 값을 직접 덮어쓰지 말고 setter 함수를 사용한다.',
 ];
 
+const HOOK_OVERVIEW =
+  '함수형 컴포넌트는 화면이 다시 그려질 때마다 함수 본문이 처음부터 다시 실행됩니다. 그래서 이전 값을 기억하거나, 렌더링이 끝난 뒤 특정 동작을 실행하거나, 무거운 계산을 계속 다시 하지 않으려면 단순 지역 변수만으로는 부족합니다. Hook은 바로 이런 문제를 해결하기 위한 React의 규칙 있는 도구입니다. 무엇을 기억할지, 언제 실행할지, 언제 이전 계산을 재사용할지를 Hook이 정해진 자리에서 관리해 주기 때문에 함수형 컴포넌트도 상태를 가진 화면을 만들 수 있습니다.';
+
 // 각 Hook 카드의 원본 데이터다.
 // 이름, 한 줄 요약, 자세한 설명, starter code, 실습 포인트, 답안 예시, 챌린지를 한 곳에 모아 두면
 // 화면 구조를 바꾸더라도 학습 내용 자체는 따로 관리할 수 있다.
@@ -34,9 +38,9 @@ export const HOOK_PRACTICES = [
   {
     name: 'useState',
     fileName: 'UseStatePractice.js',
-    summary: '버튼, 입력창처럼 바뀌는 값을 화면이 기억하게 만드는 Hook입니다.',
+    summary: '버튼이나 입력창처럼 사용자의 행동에 따라 바뀌는 값을 컴포넌트가 기억하게 만드는 Hook입니다.',
     explanation:
-      '컴포넌트 함수는 다시 실행되지만, useState는 같은 자리의 값을 다시 꺼내 줍니다. setter를 호출하면 새 값을 저장하고 화면을 한 번 더 그리게 됩니다.',
+      '컴포넌트 함수는 다시 실행될 때마다 지역 변수가 처음 상태로 돌아가지만, useState는 같은 자리의 값을 계속 기억해 둡니다. 그래서 버튼을 눌러 숫자를 바꾸거나 입력창에 글자를 쓸 때 이전 값이 사라지지 않고 이어집니다. setter를 호출하면 React는 새 값을 저장하고, 그 값을 반영한 화면을 한 번 더 그리게 됩니다.',
     playgroundDescription:
       '초기값을 바꾸거나 버튼을 추가해 보면서 같은 state가 화면 여러 곳에 함께 반영되는지 확인해 보세요.',
     starterCode: `function Counter() {
@@ -78,9 +82,9 @@ return Counter;`,
   {
     name: 'useEffect',
     fileName: 'UseEffectPractice.js',
-    summary: '렌더링이 끝난 뒤 실행해야 하는 일을 등록하는 Hook입니다.',
+    summary: '렌더링이 끝난 뒤에 실행해야 하는 일을 따로 등록할 수 있게 해 주는 Hook입니다.',
     explanation:
-      '로그 남기기, 타이머 시작, DOM 바깥 세상과 연결하기 같은 일은 화면이 그려진 뒤에 실행해야 안전합니다. 의존성 배열은 effect를 다시 실행할 시점을 정해 줍니다.',
+      '로그 남기기, 타이머 시작하기, 외부 API와 연결하기처럼 화면을 그리는 일과는 다른 작업은 렌더링이 끝난 뒤에 실행해야 안전합니다. useEffect는 이런 작업을 "언제 실행할지"와 함께 등록하는 자리입니다. 특히 의존성 배열은 어떤 값이 바뀌었을 때 effect를 다시 실행할지 정해 주기 때문에, 필요할 때만 effect가 동작하도록 도와줍니다.',
     playgroundDescription:
       '이름을 바꿔 보면서 화면 아래 effect 문구가 언제 다시 바뀌는지 확인해 보세요.',
     starterCode: `function WelcomeLogger() {
@@ -153,9 +157,9 @@ return WelcomeLogger;`,
   {
     name: 'useMemo',
     fileName: 'UseMemoPractice.js',
-    summary: '무거운 계산 결과를 다시 써도 될 때 아껴 두는 Hook입니다.',
+    summary: '비용이 큰 계산 결과를 매번 다시 만들지 않고, 필요할 때만 다시 계산하게 해 주는 Hook입니다.',
     explanation:
-      '합계 계산, 정렬, 필터링처럼 비용이 큰 작업은 렌더링이 일어날 때마다 다시 하지 않아도 됩니다. useMemo는 deps가 같으면 이전 계산 결과를 재사용합니다.',
+      '합계 계산, 정렬, 필터링처럼 시간이 조금 더 걸리는 작업은 렌더링이 일어날 때마다 무조건 다시 할 필요가 없습니다. useMemo는 이전에 계산한 결과를 기억해 두었다가, 관련된 입력값이 그대로면 그 결과를 다시 꺼내 씁니다. 즉 화면이 다시 그려진다고 해서 계산도 무조건 다시 하는 것은 아니라는 점을 이해하는 데 중요한 Hook입니다.',
     playgroundDescription:
       '탭만 바꿀 때는 계산 횟수가 그대로인지, 점수를 바꿀 때만 다시 계산되는지 확인해 보세요.',
     starterCode: `let totalRuns = 0;
@@ -259,6 +263,12 @@ export function createHooksSection() {
   );
 
   section.appendChild(createListCard('이번 섹션에서 배울 것', SECTION_GOALS));
+  section.appendChild(
+    createParagraphCard(
+      '왜 Hook이 필요한가',
+      HOOK_OVERVIEW,
+    ),
+  );
   section.appendChild(createListCard('Hook을 쓸 때 기억할 규칙', HOOK_RULES));
   section.appendChild(
     createParagraphCard(
