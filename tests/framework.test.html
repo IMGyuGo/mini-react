@@ -137,29 +137,63 @@
         background: #eef2ff;
         color: #2d3f7a;
       }
+
+      .status-covered {
+        background: #e0f2fe;
+        color: #0b4f71;
+      }
+
+      .status-blocked {
+        background: #fff1f2;
+        color: #9b1c1c;
+      }
+
+      .status-passed {
+        background: #e8f8ee;
+        color: #17653a;
+      }
+
+      .status-failed {
+        background: #fff1f2;
+        color: #9b1c1c;
+      }
+
+      .smoke-note {
+        color: #4f5d73;
+        line-height: 1.7;
+      }
     </style>
   </head>
   <body>
     <main>
-      <h1>Mini React 테스트 스텁</h1>
+      <h1>Mini React 테스트 보드</h1>
       <p>
-        이 페이지는 아직 자동 테스트를 실행하지 않습니다.
-        대신 현재 구현 진행 현황과, 구현이 끝난 뒤 무엇을 검증해야 하는지 목록을 함께 보여줍니다.
+        이 페이지는 브라우저에서 바로 돌릴 수 있는 기본 스모크 테스트를 실행하고,
+        아직 assertion으로 옮기지 않은 검증 계획은 시나리오 목록으로 함께 보여줍니다.
+      </p>
+      <p>
+        최근 추가된 상호작용 smoke test는 실제 button click과 input 이벤트도 확인합니다.
+        따라서 failed 결과가 보이면, 학습 콘텐츠 문제가 아니라 프레임워크의 이벤트 props 연결 빈칸일 가능성이 큽니다.
       </p>
 
-      <!-- 새 시나리오를 추가했을 때 브라우저에서 바로 다시 그려 볼 수 있도록
-           단순 refresh 버튼을 두었다. -->
-      <button id="refresh-button" type="button">목록 다시 그리기</button>
+      <!-- 테스트를 다시 실행하고 시나리오 화면도 함께 새로 그릴 수 있게 버튼을 둔다. -->
+      <p>
+        아래 시나리오 목록은 이제 `covered`, `blocked`, `pending` 상태를 나눠 보여줍니다.
+        `covered`는 smoke test가 이미 연결된 항목이고, `blocked`는 테스트는 있지만 현재 프레임워크 빈칸 때문에 막힌 항목입니다.
+      </p>
+      <button id="refresh-button" type="button">테스트 다시 실행</button>
       <div id="progress"></div>
+      <div id="smoke-results"></div>
+      <div id="blockers"></div>
       <div id="results"></div>
     </main>
 
     <script type="module">
-      // 각 모듈은 "실행 결과"라기보다 "테스트 시나리오 데이터"를 내보낸다.
-      // 이 HTML은 그 데이터를 받아 읽기 좋은 형태로 렌더링하는 역할을 맡는다.
-      import { runComponentStubTests } from './component.test.js';
-      import { runHookStubTests } from './hooks.test.js';
-      import { runIntegrationStubTests } from './integration.test.js';
+      // 각 모듈은 "실행 가능한 스모크 테스트"와 "남아 있는 테스트 시나리오"를 함께 내보낸다.
+      // 이 HTML은 그 결과를 읽기 좋은 형태로 렌더링하는 역할을 맡는다.
+      import { runComponentSmokeTests, runComponentStubTests } from './component.test.js';
+      import { runHookSmokeTests, runHookStubTests } from './hooks.test.js';
+      import { runIntegrationSmokeTests, runIntegrationStubTests } from './integration.test.js';
 
       // 이 데이터는 "현재 로컬 코드 상태를 사람이 읽고 판정한 진행 현황"이다.
       // 실제 자동 테스트 결과와는 다르므로, 아래 시나리오 목록과는 별도로 보여 준다.
@@ -221,7 +255,7 @@
             {
               name: 'C: 워크숍 섹션 + 통합 테스트',
               status: 'in_progress',
-              note: 'src/pages/workshopSection.js와 tests/integration.test.js는 준비되었지만, 통합 테스트는 아직 시나리오 수준이며 실제 assertion은 남아 있습니다.',
+              note: 'src/pages/workshopSection.js와 tests/integration.test.js에 preview 렌더와 실제 버튼 클릭 smoke test까지 들어갔고, 이 결과로 프레임워크 이벤트 연결 빈칸도 더 분명하게 보이게 되었습니다.',
             },
             {
               name: 'B: diff 시각화 패널 + CSS 마무리',
@@ -238,7 +272,7 @@
             {
               name: '전원: 엣지 케이스 수정, 테스트 검증',
               status: 'pending',
-              note: '현재 tests 폴더는 시나리오 중심이며, 자동 assertion과 최종 검증 단계는 아직 남아 있습니다.',
+              note: '기본 smoke test는 추가되었고 이제 click/input 상호작용도 보기 시작했지만, 이 테스트들이 드러내는 이벤트 처리 빈칸과 더 넓은 자동 assertion 확장은 아직 남아 있습니다.',
             },
             {
               name: 'B: README.md 작성',
@@ -260,7 +294,20 @@
         pending: '대기',
       };
 
+      const EXECUTION_STATUS_LABELS = {
+        passed: '통과',
+        failed: '실패',
+      };
+
+      const SCENARIO_STATUS_LABELS = {
+        covered: '커버됨',
+        blocked: 'framework blocker',
+        pending: '문서만 있음',
+      };
+
       const progressRoot = document.querySelector('#progress');
+      const smokeRoot = document.querySelector('#smoke-results');
+      const blockersRoot = document.querySelector('#blockers');
       const resultsRoot = document.querySelector('#results');
       const refreshButton = document.querySelector('#refresh-button');
 
@@ -307,11 +354,49 @@
         return section;
       }
 
+      function renderSmokeTests() {
+        const section = document.createElement('section');
+        const heading = document.createElement('h2');
+        const note = document.createElement('p');
+
+        heading.textContent = '실행 가능한 스모크 테스트';
+        note.className = 'smoke-note';
+        note.textContent =
+          '아래 결과는 이 페이지를 연 브라우저 환경에서 바로 실행한 최소 assertion입니다. 아직 모든 시나리오를 커버하지는 않지만, 핵심 연결 고리는 바로 확인할 수 있습니다.';
+
+        section.append(
+          heading,
+          note,
+          renderExecutableGroup('컴포넌트 스모크 테스트', runComponentSmokeTests()),
+          renderExecutableGroup('Hook 스모크 테스트', runHookSmokeTests()),
+          renderExecutableGroup('통합 스모크 테스트', runIntegrationSmokeTests()),
+        );
+
+        return section;
+      }
+
       function createCountBadge(label, count) {
         const badge = document.createElement('span');
         badge.className = 'status';
         badge.textContent = `${label}: ${count}`;
         return badge;
+      }
+
+      function createScenarioGroups() {
+        return [
+          {
+            title: '컴포넌트 테스트',
+            results: runComponentStubTests(),
+          },
+          {
+            title: 'Hook 테스트',
+            results: runHookStubTests(),
+          },
+          {
+            title: '통합 테스트',
+            results: runIntegrationStubTests(),
+          },
+        ];
       }
 
       function renderPhaseCard(phase) {
@@ -352,6 +437,100 @@
 
         card.append(header, summary, list);
         return card;
+      }
+
+      function renderExecutableGroup(title, results) {
+        const group = document.createElement('section');
+        const heading = document.createElement('h3');
+        const list = document.createElement('ul');
+
+        heading.textContent = title;
+        group.appendChild(heading);
+
+        for (const result of results) {
+          const item = document.createElement('li');
+          const row = document.createElement('div');
+          const name = document.createElement('p');
+          const badge = document.createElement('span');
+
+          row.className = 'result-title-row';
+          name.className = 'result-title';
+          badge.className = `status status-${result.status}`;
+
+          name.textContent = result.name;
+          badge.textContent = EXECUTION_STATUS_LABELS[result.status] || result.status;
+
+          row.append(name, badge);
+          item.appendChild(row);
+          appendDetail(item, '실행 결과', result.details);
+          list.appendChild(item);
+        }
+
+        group.appendChild(list);
+        return group;
+      }
+
+      function renderBlockedSummary(groups) {
+        const allResults = groups.flatMap((group) => group.results);
+        const blockedItems = groups.flatMap((group) =>
+          group.results
+            .filter((result) => result.status === 'blocked')
+            .map((result) => ({
+              ...result,
+              groupTitle: group.title,
+            })),
+        );
+
+        const section = document.createElement('section');
+        const heading = document.createElement('h2');
+        const note = document.createElement('p');
+        const counts = document.createElement('div');
+
+        heading.textContent = '현재 blocker 요약';
+        note.className = 'progress-note';
+        note.textContent =
+          '지금은 pending 시나리오는 없고, 남은 일은 framework 빈칸 때문에 막힌 blocker를 해소하는 것입니다.';
+        counts.className = 'progress-counts';
+        counts.append(
+          createCountBadge('covered', allResults.filter((result) => result.status === 'covered').length),
+          createCountBadge('blocked', blockedItems.length),
+          createCountBadge('pending', allResults.filter((result) => result.status === 'pending').length),
+        );
+
+        section.append(heading, note, counts);
+
+        if (blockedItems.length === 0) {
+          const done = document.createElement('p');
+          done.textContent = '현재 blocker가 없습니다.';
+          section.appendChild(done);
+          return section;
+        }
+
+        const list = document.createElement('ul');
+
+        for (const item of blockedItems) {
+          const li = document.createElement('li');
+          const row = document.createElement('div');
+          const name = document.createElement('p');
+          const badge = document.createElement('span');
+
+          row.className = 'result-title-row';
+          name.className = 'result-title';
+          badge.className = `status status-${item.status}`;
+
+          name.textContent = `${item.groupTitle} - ${item.name}`;
+          badge.textContent = SCENARIO_STATUS_LABELS[item.status] || item.status;
+
+          row.append(name, badge);
+          li.appendChild(row);
+          appendDetail(li, '커버 상태', item.coverage);
+          appendDetail(li, '현재 blocker', item.blocker);
+          appendDetail(li, '다음 담당', item.owner);
+          list.appendChild(li);
+        }
+
+        section.appendChild(list);
+        return section;
       }
 
       // 한 줄 설명 항목을 "라벨: 내용" 형태로 붙이는 helper다.
@@ -404,14 +583,17 @@
 
           titleRow.className = 'result-title-row';
           name.className = 'result-title';
-          badge.className = 'status';
+          badge.className = `status status-${result.status}`;
 
           name.textContent = result.name;
-          badge.textContent = result.status;
+          badge.textContent = SCENARIO_STATUS_LABELS[result.status] || result.status;
 
           titleRow.append(name, badge);
           item.appendChild(titleRow);
 
+          appendDetail(item, '커버 상태', result.coverage);
+          appendDetail(item, '현재 blocker', result.blocker);
+          appendDetail(item, '다음 담당', result.owner);
           appendDetail(item, '이유', result.reason);
           appendDetail(item, '대상 Hook', result.hook);
           appendDetail(item, '테스트 상황', result.setup);
@@ -428,6 +610,8 @@
       // 세 종류의 테스트 시나리오를 한 번에 다시 그린다.
       function renderAll() {
         progressRoot.replaceChildren(renderProgress(PROJECT_PROGRESS));
+        smokeRoot.replaceChildren(renderSmokeTests());
+        blockersRoot.replaceChildren(renderBlockedSummary(createScenarioGroups()));
         resultsRoot.replaceChildren(
           renderGroup('컴포넌트 테스트', runComponentStubTests()),
           renderGroup('Hook 테스트', runHookStubTests()),
