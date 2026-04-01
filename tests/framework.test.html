@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Framework Test Stub</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #f6f7fb;
+        color: #172033;
+        font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      section {
+        margin-top: 16px;
+        padding: 16px;
+        border: 1px solid #cbd3df;
+        border-radius: 12px;
+        background: white;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #2d3f7a;
+        font-size: 12px;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Mini React 테스트 스텁</h1>
+      <p>
+        이 페이지는 아직 자동 테스트를 실행하지 않습니다.
+        대신 구현이 끝난 뒤 무엇을 검증해야 하는지 목록으로 보여줍니다.
+      </p>
+
+      <button id="refresh-button" type="button">목록 다시 그리기</button>
+      <div id="results"></div>
+    </main>
+
+    <script type="module">
+      import { runComponentStubTests } from './component.test.js';
+      import { runHookStubTests } from './hooks.test.js';
+      import { runIntegrationStubTests } from './integration.test.js';
+
+      const resultsRoot = document.querySelector('#results');
+      const refreshButton = document.querySelector('#refresh-button');
+
+      function renderGroup(title, results) {
+        const section = document.createElement('section');
+        const heading = document.createElement('h2');
+        const list = document.createElement('ul');
+
+        heading.textContent = title;
+        section.appendChild(heading);
+
+        for (const result of results) {
+          const item = document.createElement('li');
+          const badge = document.createElement('span');
+          const reason = document.createElement('p');
+          const nextStep = document.createElement('p');
+
+          badge.className = 'status';
+          badge.textContent = result.status;
+
+          item.textContent = `${result.name} `;
+          item.appendChild(badge);
+
+          reason.textContent = `이유: ${result.reason}`;
+          nextStep.textContent = `다음 단계: ${result.nextStep}`;
+
+          item.append(reason, nextStep);
+          list.appendChild(item);
+        }
+
+        section.appendChild(list);
+        return section;
+      }
+
+      function renderAll() {
+        resultsRoot.replaceChildren(
+          renderGroup('컴포넌트 테스트', runComponentStubTests()),
+          renderGroup('Hook 테스트', runHookStubTests()),
+          renderGroup('통합 테스트', runIntegrationStubTests()),
+        );
+      }
+
+      refreshButton.addEventListener('click', renderAll);
+      renderAll();
+    </script>
+  </body>
+</html>
